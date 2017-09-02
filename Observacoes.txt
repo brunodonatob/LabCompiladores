@@ -1,0 +1,142 @@
+Observações:
+
+O compilador fornecido define várias classes utilizadas para representar envio de mensagem:
+
+abstract class MessageSend  extends Expr  { ... }
+class MessageSendToVariable extends MessageSend { ... }
+class MessageSendToSelf     extends MessageSend { ... }
+class MessageSendToSuper    extends MessageSend { ... }
+class MessageSendStatement     extends Statement { 
+      MessageSend  messageSend;
+      public void gen( PrintWriter out ) {
+         pw.printIdent("");
+         // messageSend.genC(pw);
+         pw.println(";");      }
+      }
+    ...
+}
+É melhor fazer MessageSend herdar de Expr do que de Statement. Vocês descobrirão porque na hora de gerar código: um envio de mensagem, quando é um “Statement”, exige um “;” no final e como expressão, não. Então é melhor fazer o mais complexo, MessageSend como Statement, utilizar o mais simples, MessageSend como Expr. 
+
+
+
+	Para criar um objeto da classe A, fazemos
+    a = new A();
+
+Para construir a ASA da expressão ``new A()´´, utilize uma classe que representa a criação de um objeto. Esta classe deve ter uma única variável de instância, um ponteiro para a classe - construtores em Krakatoa não admitem parâmetros. Note que esta classe deve herdar de Expr.
+
+
+
+
+Na tabela de símbolos, não há necessidade de colocar os métodos ou variáveis de instância. Coloque apenas as variáveis locais, parâmetros (primeiro nível)  e classes (segundo nível). Isto já está feito na classe SymbolTable do compilador fornecido neste site.
+
+Os métodos deverão ser procurados por um método searchMethod da classe KraClass (que representa uma classe de Krakatoa). Quando houver um envio de mensagem, como em 
+       x.m();
+deve-se procurar por método “m” na classe de “x”. Assim:    
+          classOf_x.searchMethod(“m”); 
+Onde classOf_x foi obtido por uma busca na tabela de símbolos pela classe “A”, assim:
+        classOf_x =  symbolTable.getInGlobal(“A”);
+Assume-se que x tenha sido declarado como
+        A x;
+e que método getInGlobal da tabela de símbolos procure por um símbolo apenas nas classes da tabela (isto é verdade para a classe SymbolTable fornecida na página da disciplina).
+	O mesmo raciocínio se aplica a variáveis de instância.
+
+
+
+A classe que representa uma variável local pode ser, inicialmente, 
+
+public class Variable {
+    private String name;
+    private Type type;
+}
+
+Como type é do tipo Type, esta variável de instância pode apontar para objetos de Type e suas subclasses, o que inclui KraClass. Assim, o tipo de uma variável pode ser “int” (objeto de Type), “boolean” (objeto de Type), "String" (objeto de Type)  ou uma classe (objeto de KraClass). Naturalmente, KraClass deve herdar de Type para que isto seja possível.
+
+
+
+
+O construtor de KraClass deve ter um único parâmetro, o nome da classe. Assim, pode-se criar um objeto de KraClass tão logo saibamos o nome da classe. Isto é necessário pois o objeto que representa a classe deve logo ser inserido na Tabela de Símbolos, pois uma classe pode declarar um objeto dela mesma:
+
+class A {
+   private A x;
+   ...
+end
+ 
+Assim, ao encontar o “x”, haverá uma busca na tabela de símbolos e lá será encontrado o objeto de KraClass que representa a classe A, que foi inserido lá tão logo o nome da classe se tornou disponível. A mesma observação vale para MethodDec: podemos ter chamadas recursivas !
+
+
+
+
+
+Ao encontrar um comando 
+                       x = y;
+o compilador deve procurar por x na tabela de símbolos de tal forma que o objeto de AssignmentStatement (classe não fornecida, crie-a) correspondente a esta atribuição tenha um ponteiro para o objeto Variable representando x. Este objeto é o que foi criado na declaração de x. O mesmo se aplica a y. Você deve fazer algum assim:
+
+   // lexer.getStringValue() retorna “x”
+   Variable left = st.getInLocal( lexer.getStringValue() );
+   if ( left == null ) error.show(“...”);
+   return new AssignmentStatement( left, expr() );
+
+Duas estratégias ERRADAS são dadas abaixo.
+
+1) representar x como String. A classe AssignmentStatement seria 
+   class AssignmentStatement {
+      private String    leftSide;
+      private Expr      rightSide;
+      ...
+   }
+
+2) representar x como uma variável, mas criar esta variável ao encontrar x :
+   // lexer.getStringValue() retorna “x”
+   Variable left = new Variable( lexer.getStringValue() );
+   return new AssignmentStatement( left, expr() );  
+
+
+Os únicos lugares onde deve-se criar objetos de Variable, InstanceVariable e Parameter é na declaração das variáveis correspondentes. E nunca se deve representar variáveis por Strings --- utilize objetos de Variable e suas subclasses. O mesmo se aplica a KraClass e ao tipo de variáveis.
+
+
+
+
+Os compiladores sinalizam uma exceção depois de mostrar um erro. Esta exceção deve ser (é) capturada em um bloco try no método compile da classe Compiler. A impressão da pilha de chamadas (com e.printStackTrace()) deve ser utilizada apenas na fase de depuração do compilador e não deve estar presente no compilador entregue ao professor.
+
+
+
+
+Não deve haver uma classe IdList no compilador. A produção IdList na gramática é utilizada para duas coisas diferentes: análise de variáveis de instância e variáveis locais. Então é melhor criar, se necessário, uma classe InstanceVariableList e outra LocalVariableList.
+
+
+
+Há uma terrível inconsistência no nome dos métodos dos analisadores sintáticos que eu apresentei como exemplos. Lembram dos nomes dos métodos ? São expr, ifStat, whileStat, varDec, etc. Absurdamente errado. Estes nomes são substantivos. Métodos designam ações e, portanto, devem ter nomes verbais. Os nomes corretos seriam analyzeExpr, analyzeIfStat, etc, dizendo "analise uma expressão", ... Naturalmente, utilizamos expr no lugar de analyzeExpr por um motivo de economia de digitação. Mas no vosso trabalho vocês não devem repetir este erro em outras classes que não o analisador sintático. 
+
+    Algumas dicas para fazer o trabalho:
+•	Faça KraClass (classe da ASA para uma classe de Simples) herdar de Type;
+•	A ASA deve ser facílima de fazer. Se você não achar fácil, você não entendeu como fazê-la. Ela deve ser feita olhando-se a estrutura de um programa em Simples, NÃO a gramática Simples;
+•	devem existir classes da ASA InstanceVariable, Parameter, Variable e MethodDec para variáveis de instância, parâmetros, ... e também InstanceVariableList, ParameterList, VariableList, MethodList para lista de variáveis de instância, ... Cada uma destas listas deve ter um método que gera código. Este método chama o método de gerar código de cada um dos elementos da lista. Há exemplos em abundância na ASA de Green. As classes “[A-Za-z]+List” são quase todas iguais;
+•	você obrigatoriamente usará uma variável de instância currentClass da classe Compiler que aponta para o objeto que representa a classe corrente. Utilize esta variável para inserir uma lista de variáveis de instância na classe  ou uma lista de métodos (privados ou públicos);
+•	coloque também uma variável de instância currentMethod na classe Compiler;
+
+
+Utilize a classe PW para fazer a tabulação do código gerado corretamente. Esta classe está no diretório krakatoa\AST. Faça assim: antes de usar pw, inicialize-a uma única vez com o objeto PrintWriter utilizado para saída
+      pw.set(out);
+pw possui métodos printIdent e printlnIdent que automaticamente indentam o que você imprime com  pw.printIdent ou pw.printlnIdent. Naturalmente, printlnIdent imprime a string e pula para a próxima linha, enquanto que printIdent não. Se você quiser aumentar a indentação, utilize pw.add(). Para diminuir, utilize pw.sub(). Teste o seguinte código
+       PrintWriter out = new PrintWriter( ... );
+       pw.set(out);  // faça isso uma única vez antes do início da geração de código --- o que já é feito pelo compilador fornecido.
+       pw.printIdent(“a = a + 1;”);
+       pw.add();
+       pw.printIdent("if");
+       pw.println( "  a > b");   // código sem indentação, pois foi escrito com pw.print e não pw.printIdent
+       pw.printIdent("then");
+       pw.add();    //  comandos dentro do then devem ser indentados
+       pw.printlnIdent("a = b;");
+       pw.sub();    // diminui a indentação: acabou o then
+       pw.printlnIdent("endif");
+       pw.sub();
+       pw.println("Texto normal, não indentado");
+A saída deste código é
+
+a = a + 1;
+   if a > b
+   then
+      a = b;
+   endif
+Texto normal, não indentado
+

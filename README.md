@@ -1,8 +1,8 @@
 # Primeiro Trabalho de LC
 
-### Prof. José de Oliveira Guimarães.
-### UFSCar
-### Segundo semestre de 2017
+Prof. José de Oliveira Guimarães.
+UFSCar
+Segundo semestre de 2017
 
 ## Data de entrega: 11/10/17 às 16h
 

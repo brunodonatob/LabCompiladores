@@ -1,3 +1,62 @@
+/*
+  Universidade Federal de São Carlos
+
+   Bruno Donato  RA 587460
+   Ingrid Santos RA 620300
+
+*/
+
+/*
+ AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec
+ BasicType := “void” | “int” | “boolean” | “String”
+ BasicValue := IntValue | BooleanValue | StringValue
+ BooleanValue := “true” | “false”
+ ClassDec := “class” Id [ “extends” Id ] “{” MemberList “}”
+ CompStatement := “{” { Statement } “}“
+ Digit := “0” | ... | “9”
+ DoWhileStat := “do” CompStatement “while” “(” Expression “)”
+ Expression := SimpleExpression [ Relation SimpleExpression ]
+ ExpressionList := Expression { “,” Expression }
+ Factor := BasicValue | “(” Expression “)” | “!” Factor | “null” | ObjectCreation | PrimaryExpr
+ FormalParamDec := ParamDec { “,” ParamDec }
+ HighOperator := “∗” | “/” | “&&”
+ Id := Letter { Letter | Digit | “ ” }
+ IdList := Id { “,” Id }
+ IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]
+ InstVarDec := Type IdList “;”
+ IntValue := Digit { Digit }
+ LeftValue := [ (“this” | Id ) “.” ] Id
+ Letter := “A” | ... | “Z” | “a” | ... | “z”
+ LocalDec := Type IdList “;”
+ LowOperator := “+” | “−” | “||”
+ MemberList := { Qualifier Member }
+ Member := InstVarDec | MethodDec
+ MethodDec := Type Id “(” [ FormalParamDec ] “)” “{” StatementList “}”
+ MOCall := “@” Id [ “(” { MOParam } “)” ]
+ MOParam := IntValue | StringValue | Id
+ ObjectCreation := “new” Id “(” “)”
+ ParamDec := Type Id
+ Program := { MOCall } ClassDec { ClassDec }
+ Qualifier := [ “final” ] [ “static” ] ( “private” | “public”)
+ ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
+ PrimaryExpr := “super” “.” Id “(” [ ExpressionList ] “)” | Id | Id “.” Id | Id “.” Id “(” [ ExpressionList ] ”)” |
+		Id “.” Id “.” Id “(” [ ExpressionList ] “)” | “this” | “this” “.” Id | “this” ”.” Id “(” [ ExpressionList ] “)” |
+		“this” ”.” Id “.” Id “(” [ ExpressionList ] “)”
+ Relation := “==” | “<” | “>” | “<=” | “>=” | “! =”
+ ReturnStat := “return” Expression
+ RightValue := “this” [ “.” Id ] | Id [ “.” Id ]
+ Signal := “+” | “−”
+ SignalFactor := [ Signal ] Factor
+ SimpleExpression := Term { LowOperator Term }
+ Statement := AssignExprLocalDec “;” | IfStat | WhileStat | ReturnStat “;” | ReadStat “;” | WriteStat “;” |
+  	“break” “;” | “;” | CompStatement | DoWhileStat
+ StatementList := { Statement }
+ Term := SignalFactor { HighOperator SignalFactor }
+ Type := BasicType | Id
+ WriteStat := “write” “(” ExpressionList “)”
+ WhileStat := “while” “(” Expression “)” Statement
+
+ */
 
 package comp;
 
@@ -53,8 +112,8 @@ public class Compiler {
      *     public void run() { } <br>
      * end <br>
      * </code>
-     * 
-	   
+     *
+
 	 */
 	@SuppressWarnings("incomplete-switch")
 	private MetaobjectCall metaobjectCall() {
@@ -77,12 +136,12 @@ public class Compiler {
 					metaobjectParamList.add(lexer.getStringValue());
 				}
 				lexer.nextToken();
-				if ( lexer.token == Symbol.COMMA ) 
+				if ( lexer.token == Symbol.COMMA )
 					lexer.nextToken();
 				else
 					break;
 			}
-			if ( lexer.token != Symbol.RIGHTPAR ) 
+			if ( lexer.token != Symbol.RIGHTPAR )
 				signalError.showError("')' expected after metaobject call with parameters");
 			else
 				lexer.nextToken();
@@ -98,26 +157,26 @@ public class Compiler {
 				signalError.showError("The first parameter of metaobject 'ce' should be an integer number");
 			if ( !( metaobjectParamList.get(1) instanceof String) ||  !( metaobjectParamList.get(2) instanceof String) )
 				signalError.showError("The second and third parameters of metaobject 'ce' should be literal strings");
-			if ( metaobjectParamList.size() >= 4 && !( metaobjectParamList.get(3) instanceof String) )  
+			if ( metaobjectParamList.size() >= 4 && !( metaobjectParamList.get(3) instanceof String) )
 				signalError.showError("The fourth parameter of metaobject 'ce' should be a literal string");
-			
+
 		}
-			
+
 		return new MetaobjectCall(name, metaobjectParamList);
 	}
 
 	private void classDec() {
-		// Note que os m�todos desta classe n�o correspondem exatamente �s
+		// Note que os m�todos desta classe n�o correspondem exatamente �s
 		// regras
-		// da gram�tica. Este m�todo classDec, por exemplo, implementa
-		// a produ��o KraClass (veja abaixo) e partes de outras produ��es.
+		// da gram�tica. Este m�todo classDec, por exemplo, implementa
+		// a produ��o KraClass (veja abaixo) e partes de outras produ��es.
 
 		/*
 		 * KraClass ::= ``class'' Id [ ``extends'' Id ] "{" MemberList "}"
-		 * MemberList ::= { Qualifier Member } 
+		 * MemberList ::= { Qualifier Member }
 		 * Member ::= InstVarDec | MethodDec
-		 * InstVarDec ::= Type IdList ";" 
-		 * MethodDec ::= Qualifier Type Id "("[ FormalParamDec ] ")" "{" StatementList "}" 
+		 * InstVarDec ::= Type IdList ";"
+		 * MethodDec ::= Qualifier Type Id "("[ FormalParamDec ] ")" "{" StatementList "}"
 		 * Qualifier ::= [ "static" ]  ( "private" | "public" )
 		 */
 		if ( lexer.token != Symbol.CLASS ) signalError.showError("'class' expected");
@@ -261,7 +320,7 @@ public class Compiler {
 			result = Type.stringType;
 			break;
 		case IDENT:
-			// # corrija: fa�a uma busca na TS para buscar a classe
+			// # corrija: fa�a uma busca na TS para buscar a classe
 			// IDENT deve ser uma classe.
 			result = null;
 			break;
@@ -360,13 +419,13 @@ public class Compiler {
 		lexer.nextToken();
 		if ( lexer.token == Symbol.SEMICOLON )
 			lexer.nextToken();
-		
+
 		return new StatementAssert(e, lineNumber, message);
 	}
 
 	/*
-	 * retorne true se 'name' � uma classe declarada anteriormente. � necess�rio
-	 * fazer uma busca na tabela de s�mbolos para isto.
+	 * retorne true se 'name' � uma classe declarada anteriormente. � necess�rio
+	 * fazer uma busca na tabela de s�mbolos para isto.
 	 */
 	private boolean isType(String name) {
 		return this.symbolTable.getInGlobal(name) != null;
@@ -379,13 +438,13 @@ public class Compiler {
 
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
-				// token � uma classe declarada textualmente antes desta
-				// instru��o
+				// token � uma classe declarada textualmente antes desta
+				// instru��o
 				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue())) ) {
 			/*
-			 * uma declara��o de vari�vel. 'lexer.token' � o tipo da vari�vel
-			 * 
-			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec 
+			 * uma declara��o de vari�vel. 'lexer.token' � o tipo da vari�vel
+			 *
+			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
 			 * LocalDec ::= Type IdList ``;''
 			 */
 			localDec();
@@ -582,18 +641,18 @@ public class Compiler {
 	/*
 	 * Factor ::= BasicValue | "(" Expression ")" | "!" Factor | "null" |
 	 *      ObjectCreation | PrimaryExpr
-	 * 
-	 * BasicValue ::= IntValue | BooleanValue | StringValue 
-	 * BooleanValue ::=  "true" | "false" 
-	 * ObjectCreation ::= "new" Id "(" ")" 
-	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  | 
+	 *
+	 * BasicValue ::= IntValue | BooleanValue | StringValue
+	 * BooleanValue ::=  "true" | "false"
+	 * ObjectCreation ::= "new" Id "(" ")"
+	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  |
 	 *                 Id  |
-	 *                 Id "." Id | 
+	 *                 Id "." Id |
 	 *                 Id "." Id "(" [ ExpressionList ] ")" |
 	 *                 Id "." Id "." Id "(" [ ExpressionList ] ")" |
-	 *                 "this" | 
-	 *                 "this" "." Id | 
-	 *                 "this" "." Id "(" [ ExpressionList ] ")"  | 
+	 *                 "this" |
+	 *                 "this" "." Id |
+	 *                 "this" "." Id "(" [ ExpressionList ] ")"  |
 	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 	 */
 	private Expr factor() {
@@ -644,8 +703,8 @@ public class Compiler {
 
 			String className = lexer.getStringValue();
 			/*
-			 * // encontre a classe className in symbol table KraClass 
-			 *      aClass = symbolTable.getInGlobal(className); 
+			 * // encontre a classe className in symbol table KraClass
+			 *      aClass = symbolTable.getInGlobal(className);
 			 *      if ( aClass == null ) ...
 			 */
 
@@ -659,14 +718,14 @@ public class Compiler {
 			 */
 			return null;
 			/*
-          	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  | 
+          	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 Id  |
-          	 *                 Id "." Id | 
+          	 *                 Id "." Id |
           	 *                 Id "." Id "(" [ ExpressionList ] ")" |
           	 *                 Id "." Id "." Id "(" [ ExpressionList ] ")" |
-          	 *                 "this" | 
-          	 *                 "this" "." Id | 
-          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  | 
+          	 *                 "this" |
+          	 *                 "this" "." Id |
+          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 			 */
 		case SUPER:
@@ -681,7 +740,7 @@ public class Compiler {
 				signalError.showError("Identifier expected");
 			messageName = lexer.getStringValue();
 			/*
-			 * para fazer as confer�ncias sem�nticas, procure por 'messageName'
+			 * para fazer as confer�ncias sem�nticas, procure por 'messageName'
 			 * na superclasse/superclasse da superclasse etc
 			 */
 			lexer.nextToken();
@@ -689,9 +748,9 @@ public class Compiler {
 			break;
 		case IDENT:
 			/*
-          	 * PrimaryExpr ::=  
+          	 * PrimaryExpr ::=
           	 *                 Id  |
-          	 *                 Id "." Id | 
+          	 *                 Id "." Id |
           	 *                 Id "." Id "(" [ ExpressionList ] ")" |
           	 *                 Id "." Id "." Id "(" [ ExpressionList ] ")" |
 			 */
@@ -715,10 +774,10 @@ public class Compiler {
 					if ( lexer.token == Symbol.DOT ) {
 						// Id "." Id "." Id "(" [ ExpressionList ] ")"
 						/*
-						 * se o compilador permite vari�veis est�ticas, � poss�vel
-						 * ter esta op��o, como
+						 * se o compilador permite vari�veis est�ticas, � poss�vel
+						 * ter esta op��o, como
 						 *     Clock.currentDay.setDay(12);
-						 * Contudo, se vari�veis est�ticas n�o estiver nas especifica��es,
+						 * Contudo, se vari�veis est�ticas n�o estiver nas especifica��es,
 						 * sinalize um erro neste ponto.
 						 */
 						lexer.nextToken();
@@ -733,8 +792,8 @@ public class Compiler {
 						// Id "." Id "(" [ ExpressionList ] ")"
 						exprList = this.realParameters();
 						/*
-						 * para fazer as confer�ncias sem�nticas, procure por
-						 * m�todo 'ident' na classe de 'firstId'
+						 * para fazer as confer�ncias sem�nticas, procure por
+						 * m�todo 'ident' na classe de 'firstId'
 						 */
 					}
 					else {
@@ -745,18 +804,18 @@ public class Compiler {
 			break;
 		case THIS:
 			/*
-			 * Este 'case THIS:' trata os seguintes casos: 
-          	 * PrimaryExpr ::= 
-          	 *                 "this" | 
-          	 *                 "this" "." Id | 
-          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  | 
+			 * Este 'case THIS:' trata os seguintes casos:
+          	 * PrimaryExpr ::=
+          	 *                 "this" |
+          	 *                 "this" "." Id |
+          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 			 */
 			lexer.nextToken();
 			if ( lexer.token != Symbol.DOT ) {
 				// only 'this'
 				// retorne um objeto da ASA que representa 'this'
-				// confira se n�o estamos em um m�todo est�tico
+				// confira se n�o estamos em um m�todo est�tico
 				return null;
 			}
 			else {
@@ -765,12 +824,12 @@ public class Compiler {
 					signalError.showError("Identifier expected");
 				id = lexer.getStringValue();
 				lexer.nextToken();
-				// j� analisou "this" "." Id
+				// j� analisou "this" "." Id
 				if ( lexer.token == Symbol.LEFTPAR ) {
 					// "this" "." Id "(" [ ExpressionList ] ")"
 					/*
-					 * Confira se a classe corrente possui um m�todo cujo nome �
-					 * 'ident' e que pode tomar os par�metros de ExpressionList
+					 * Confira se a classe corrente possui um m�todo cujo nome �
+					 * 'ident' e que pode tomar os par�metros de ExpressionList
 					 */
 					exprList = this.realParameters();
 				}
@@ -786,7 +845,7 @@ public class Compiler {
 					// retorne o objeto da ASA que representa "this" "." Id
 					/*
 					 * confira se a classe corrente realmente possui uma
-					 * vari�vel de inst�ncia 'ident'
+					 * vari�vel de inst�ncia 'ident'
 					 */
 					return null;
 				}

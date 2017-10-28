@@ -23,11 +23,11 @@ class Program {
 		
 		do { 
 		    do { 
-			    ++i;
+			    i = i + 1;
 				write(i);
 			} 
 			while (i < n);
-			++j;
+			j = j + 1;
 		}
 		while ( j < n );
     }

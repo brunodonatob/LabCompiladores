@@ -1,3 +1,62 @@
+/*
+  Universidade Federal de São Carlos
+
+   Bruno Donato  RA 587460
+   Ingrid Santos RA 620300
+
+*/
+
+/*
+ AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec
+ BasicType := “void” | “int” | “boolean” | “String”
+ BasicValue := IntValue | BooleanValue | StringValue
+ BooleanValue := “true” | “false”
+ ClassDec := “class” Id [ “extends” Id ] “{” MemberList “}”
+ CompStatement := “{” { Statement } “}“
+ Digit := “0” | ... | “9”
+ DoWhileStat := “do” CompStatement “while” “(” Expression “)”
+ Expression := SimpleExpression [ Relation SimpleExpression ]
+ ExpressionList := Expression { “,” Expression }
+ Factor := BasicValue | “(” Expression “)” | “!” Factor | “null” | ObjectCreation | PrimaryExpr
+ FormalParamDec := ParamDec { “,” ParamDec }
+ HighOperator := “∗” | “/” | “&&”
+ Id := Letter { Letter | Digit | “ ” }
+ IdList := Id { “,” Id }
+ IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]
+ InstVarDec := Type IdList “;”
+ IntValue := Digit { Digit }
+ LeftValue := [ (“this” | Id ) “.” ] Id
+ Letter := “A” | ... | “Z” | “a” | ... | “z”
+ LocalDec := Type IdList “;”
+ LowOperator := “+” | “−” | “||”
+ MemberList := { Qualifier Member }
+ Member := InstVarDec | MethodDec
+ MethodDec := Type Id “(” [ FormalParamDec ] “)” “{” StatementList “}”
+ MOCall := “@” Id [ “(” { MOParam } “)” ]
+ MOParam := IntValue | StringValue | Id
+ ObjectCreation := “new” Id “(” “)”
+ ParamDec := Type Id
+ Program := { MOCall } ClassDec { ClassDec }
+ Qualifier := [ “final” ] [ “static” ] ( “private” | “public”)
+ ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
+ PrimaryExpr := “super” “.” Id “(” [ ExpressionList ] “)” | Id | Id “.” Id | Id “.” Id “(” [ ExpressionList ] ”)” |
+		Id “.” Id “.” Id “(” [ ExpressionList ] “)” | “this” | “this” “.” Id | “this” ”.” Id “(” [ ExpressionList ] “)” |
+		“this” ”.” Id “.” Id “(” [ ExpressionList ] “)”
+ Relation := “==” | “<” | “>” | “<=” | “>=” | “! =”
+ ReturnStat := “return” Expression
+ RightValue := “this” [ “.” Id ] | Id [ “.” Id ]
+ Signal := “+” | “−”
+ SignalFactor := [ Signal ] Factor
+ SimpleExpression := Term { LowOperator Term }
+ Statement := AssignExprLocalDec “;” | IfStat | WhileStat | ReturnStat “;” | ReadStat “;” | WriteStat “;” |
+  	“break” “;” | “;” | CompStatement | DoWhileStat
+ StatementList := { Statement }
+ Term := SignalFactor { HighOperator SignalFactor }
+ Type := BasicType | Id
+ WriteStat := “write” “(” ExpressionList “)”
+ WhileStat := “while” “(” Expression “)” Statement
+
+ */
 
 package comp;
 
@@ -53,8 +112,8 @@ public class Compiler {
      *     public void run() { } <br>
      * end <br>
      * </code>
-     * 
-	   
+     *
+
 	 */
 	@SuppressWarnings("incomplete-switch")
 	private MetaobjectCall metaobjectCall() {
@@ -77,12 +136,12 @@ public class Compiler {
 					metaobjectParamList.add(lexer.getStringValue());
 				}
 				lexer.nextToken();
-				if ( lexer.token == Symbol.COMMA ) 
+				if ( lexer.token == Symbol.COMMA )
 					lexer.nextToken();
 				else
 					break;
 			}
-			if ( lexer.token != Symbol.RIGHTPAR ) 
+			if ( lexer.token != Symbol.RIGHTPAR )
 				signalError.showError("')' expected after metaobject call with parameters");
 			else
 				lexer.nextToken();
@@ -98,11 +157,11 @@ public class Compiler {
 				signalError.showError("The first parameter of metaobject 'ce' should be an integer number");
 			if ( !( metaobjectParamList.get(1) instanceof String) ||  !( metaobjectParamList.get(2) instanceof String) )
 				signalError.showError("The second and third parameters of metaobject 'ce' should be literal strings");
-			if ( metaobjectParamList.size() >= 4 && !( metaobjectParamList.get(3) instanceof String) )  
+			if ( metaobjectParamList.size() >= 4 && !( metaobjectParamList.get(3) instanceof String) )
 				signalError.showError("The fourth parameter of metaobject 'ce' should be a literal string");
-			
+
 		}
-			
+
 		return new MetaobjectCall(name, metaobjectParamList);
 	}
 
@@ -114,10 +173,10 @@ public class Compiler {
 
 		/*
 		 * KraClass ::= ``class'' Id [ ``extends'' Id ] "{" MemberList "}"
-		 * MemberList ::= { Qualifier Member } 
+		 * MemberList ::= { Qualifier Member }
 		 * Member ::= InstVarDec | MethodDec
-		 * InstVarDec ::= Type IdList ";" 
-		 * MethodDec ::= Qualifier Type Id "("[ FormalParamDec ] ")" "{" StatementList "}" 
+		 * InstVarDec ::= Type IdList ";"
+		 * MethodDec ::= Qualifier Type Id "("[ FormalParamDec ] ")" "{" StatementList "}"
 		 * Qualifier ::= [ "static" ]  ( "private" | "public" )
 		 */
 		if ( lexer.token != Symbol.CLASS ) signalError.showError("'class' expected");
@@ -377,7 +436,7 @@ public class Compiler {
 		lexer.nextToken();
 		if ( lexer.token == Symbol.SEMICOLON )
 			lexer.nextToken();
-		
+
 		return new StatementAssert(e, lineNumber, message);
 	}
 
@@ -401,8 +460,13 @@ public class Compiler {
 				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue())) ) {
 			/*
 			 * uma declara��o de vari�vel. 'lexer.token' � o tipo da vari�vel
+<<<<<<< HEAD
 			 * 
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec 
+=======
+			 *
+			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
+>>>>>>> 66d6a614c9cd30304bc10b178905fc8844af8217
 			 * LocalDec ::= Type IdList ``;''
 			 */
 			localDec();
@@ -616,18 +680,18 @@ public class Compiler {
 	/*
 	 * Factor ::= BasicValue | "(" Expression ")" | "!" Factor | "null" |
 	 *      ObjectCreation | PrimaryExpr
-	 * 
-	 * BasicValue ::= IntValue | BooleanValue | StringValue 
-	 * BooleanValue ::=  "true" | "false" 
-	 * ObjectCreation ::= "new" Id "(" ")" 
-	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  | 
+	 *
+	 * BasicValue ::= IntValue | BooleanValue | StringValue
+	 * BooleanValue ::=  "true" | "false"
+	 * ObjectCreation ::= "new" Id "(" ")"
+	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  |
 	 *                 Id  |
-	 *                 Id "." Id | 
+	 *                 Id "." Id |
 	 *                 Id "." Id "(" [ ExpressionList ] ")" |
 	 *                 Id "." Id "." Id "(" [ ExpressionList ] ")" |
-	 *                 "this" | 
-	 *                 "this" "." Id | 
-	 *                 "this" "." Id "(" [ ExpressionList ] ")"  | 
+	 *                 "this" |
+	 *                 "this" "." Id |
+	 *                 "this" "." Id "(" [ ExpressionList ] ")"  |
 	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 	 */
 	private Expr factor() {
@@ -682,8 +746,8 @@ public class Compiler {
 				this.signalError.showError("Class '" + className + "' does not exist");
 			}
 			/*
-			 * // encontre a classe className in symbol table KraClass 
-			 *      aClass = symbolTable.getInGlobal(className); 
+			 * // encontre a classe className in symbol table KraClass
+			 *      aClass = symbolTable.getInGlobal(className);
 			 *      if ( aClass == null ) ...
 			 */
 
@@ -697,14 +761,14 @@ public class Compiler {
 			 */
 			return null;
 			/*
-          	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  | 
+          	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 Id  |
-          	 *                 Id "." Id | 
+          	 *                 Id "." Id |
           	 *                 Id "." Id "(" [ ExpressionList ] ")" |
           	 *                 Id "." Id "." Id "(" [ ExpressionList ] ")" |
-          	 *                 "this" | 
-          	 *                 "this" "." Id | 
-          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  | 
+          	 *                 "this" |
+          	 *                 "this" "." Id |
+          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 			 */
 		case SUPER:
@@ -727,9 +791,9 @@ public class Compiler {
 			break;
 		case IDENT:
 			/*
-          	 * PrimaryExpr ::=  
+          	 * PrimaryExpr ::=
           	 *                 Id  |
-          	 *                 Id "." Id | 
+          	 *                 Id "." Id |
           	 *                 Id "." Id "(" [ ExpressionList ] ")" |
           	 *                 Id "." Id "." Id "(" [ ExpressionList ] ")" |
 			 */
@@ -805,11 +869,11 @@ public class Compiler {
 			break;
 		case THIS:
 			/*
-			 * Este 'case THIS:' trata os seguintes casos: 
-          	 * PrimaryExpr ::= 
-          	 *                 "this" | 
-          	 *                 "this" "." Id | 
-          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  | 
+			 * Este 'case THIS:' trata os seguintes casos:
+          	 * PrimaryExpr ::=
+          	 *                 "this" |
+          	 *                 "this" "." Id |
+          	 *                 "this" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 			 */
 			lexer.nextToken();

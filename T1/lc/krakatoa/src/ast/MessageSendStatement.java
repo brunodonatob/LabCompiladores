@@ -9,8 +9,13 @@ public class MessageSendStatement extends Statement {
       pw.println(";");
    }
 
+   @Override
+   public void genKra(PW pw) {
+   	// TODO Auto-generated method stub
+   	
+   }
+   
    private MessageSend  messageSend;
-
 }
 
 

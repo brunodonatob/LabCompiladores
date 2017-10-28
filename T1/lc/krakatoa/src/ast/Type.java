@@ -18,5 +18,27 @@ abstract public class Type {
 
     abstract public String getCname();
 
-    private String name;
+	public boolean isCompatible(Type other) {
+		
+		if(this == booleanType) {
+			return other == booleanType;
+		}
+		else if(this == intType) {
+			return other == intType;
+		}
+		else if(this == stringType) {
+			return other == stringType;
+		}
+		else if(this == voidType) {
+			return false;
+		}
+		else if(this instanceof KraClass) {
+			return this == other || ((KraClass ) this ).isSubclassOf(other);
+		}
+		else {
+			return false;	
+		}
+	}
+	
+	private String name;
 }

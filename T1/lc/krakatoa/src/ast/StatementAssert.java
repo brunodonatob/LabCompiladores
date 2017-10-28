@@ -17,6 +17,12 @@ public class StatementAssert extends Statement {
 		pw.printlnIdent("}");
 
 	}
+	
+	@Override
+	public void genKra(PW pw) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public Expr getExpr() {
 		return expr;

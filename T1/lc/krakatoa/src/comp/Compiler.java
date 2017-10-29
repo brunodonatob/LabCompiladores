@@ -373,8 +373,9 @@ public class Compiler {
 		parameterName = lexer.getStringValue();
 		Parameter p = new Parameter(parameterName, t);
 		
-		if(symbolTable.getInLocal(key) != null) {
-			signalError.showError("Parameter '"++"' has already been declared");
+		// Verifica se parametro ja existe
+		if(symbolTable.getInLocal(parameterName)) {
+			signalError.showError("A variable with name '"+ parameterName +"' has already been declared");
 		}
 		this.symbolTable.putInLocal(p.getName(), p);
 		
@@ -515,7 +516,6 @@ public class Compiler {
 	 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
 	 */
 	private Expr assignExprLocalDec() {
-
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
 				// token eh uma classe declarada textualmente antes desta
@@ -528,15 +528,30 @@ public class Compiler {
 			 * LocalDec ::= Type IdList ``;''
 			 */
 			localDec();
+			
+			if ( lexer.token != Symbol.SEMICOLON )
+				signalError.showError("';' expected", true);
+			else
+				lexer.nextToken();
 		}
 		else {
 			/*
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ]
 			 */
-			expr();
+			
+			Expr expressao = expr();	
+			
+			
 			if ( lexer.token == Symbol.ASSIGN ) {
 				lexer.nextToken();
-				expr();
+				
+				Expr e = expr();
+				
+				// Ainda tem que organizar classes pra fazer isso
+				if(e.getType() != expressao.getType()) {
+					signalError.showError("Wrong type error");
+				} 
+				
 				if ( lexer.token != Symbol.SEMICOLON )
 					signalError.showError("';' expected", true);
 				else
@@ -694,10 +709,16 @@ public class Compiler {
 				|| op == Symbol.LT || op == Symbol.GE || op == Symbol.GT ) {
 			lexer.nextToken();
 			Expr right = simpleExpr();
+			
+			// Ainda precisa arrumar classes pra isso funcionar
+			if(left.getType() != right.getType() && (op == Symbol.NEQ || op == Symbol.EQ))
+				signalError.showError("Incompatible types cannot be compared");
+			
 			left = new CompositeExpr(left, op, right);
 		}
 		return left;
 	}
+
 
 	private Expr simpleExpr() {
 		Symbol op;
@@ -707,6 +728,14 @@ public class Compiler {
 				|| op == Symbol.OR) {
 			lexer.nextToken();
 			Expr right = term();
+			
+			if(left.getType().getName().equals("boolean") && op != Symbol.OR)
+				signalError.showError("Type boolean does not support this operation");
+				
+			if(left.getType() != right.getType()) 
+				signalError.showError("Type error");
+
+			
 			left = new CompositeExpr(left, op, right);
 		}
 		return left;
@@ -791,6 +820,8 @@ public class Compiler {
 		case NOT:
 			lexer.nextToken();
 			anExpr = expr();
+			if(anExpr.getType().getName().equals("int"))
+				signalError.showError("Operator ! does not accept int values");
 			return new UnaryExpr(anExpr, Symbol.NOT);
 			// ObjectCreation ::= "new" Id "(" ")"
 		case NEW:

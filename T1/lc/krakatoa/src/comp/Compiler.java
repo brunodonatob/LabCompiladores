@@ -83,18 +83,20 @@ public class Compiler {
 		return program;
 	}
 
+	//  Program := { MOCall } ClassDec { ClassDec }
 	private Program program(ArrayList<CompilationError> compilationErrorList) {
         // Program ::= KraClass { KraClass }
         ArrayList<MetaobjectCall> metaobjectCallList = new ArrayList<>();
         ArrayList<KraClass> kraClassList = new ArrayList<>();
+        
         Program program = new Program(kraClassList, metaobjectCallList, compilationErrorList);
         try {
             while ( lexer.token == Symbol.MOCall ) {
                 metaobjectCallList.add(metaobjectCall());
             }
-            classDec();
+            kraClassList.add(classDec());
             while ( lexer.token == Symbol.CLASS )
-                classDec();
+            	kraClassList.add(classDec());
             if ( lexer.token != Symbol.EOF ) {
                 signalError.showError("End of file expected");
             }
@@ -105,6 +107,23 @@ public class Compiler {
         catch ( RuntimeException e ) {
             e.printStackTrace();
         }
+        
+        // Verifica se existe a classe Program
+        Boolean programExists = false;
+        for(KraClass k: kraClassList) {
+        	if(k.getName().equals("Program")) {
+        		programExists = true;
+        		
+        		// Verifica se existe metodo 'run' na classe Program
+        		if(k.searchPublicMethod("run") == null) {
+        			signalError.showError("There must be a public method called 'run' in class Program");
+        		}
+        	}
+        }
+        if(programExists == false) {
+        	signalError.showError("There must be a class called 'Program'");
+        }
+        
         return program;
     }
 
@@ -168,11 +187,12 @@ public class Compiler {
 		return new MetaobjectCall(name, metaobjectParamList);
 	}
 
-	private void classDec() {
-		// Note que os m�todos desta classe n�o correspondem exatamente �s
+	//  ClassDec := “class” Id [ “extends” Id ] “{” MemberList “}”
+	private KraClass classDec() {
+		// Note que os metodos desta classe nao correspondem exatamente as
 		// regras
-		// da gram�tica. Este m�todo classDec, por exemplo, implementa
-		// a produ��o KraClass (veja abaixo) e partes de outras produ��es.
+		// da gramatica. Este metodo classDec, por exemplo, implementa
+		// a producao KraClass (veja abaixo) e partes de outras producoes.
 
 		/*
 		 * KraClass ::= ``class'' Id [ ``extends'' Id ] "{" MemberList "}"
@@ -192,6 +212,7 @@ public class Compiler {
 		
 		symbolTable.putInGlobal(className, currentClass);
 		lexer.nextToken();
+		
 		if ( lexer.token == Symbol.EXTENDS ) {
 			lexer.nextToken();
 			if ( lexer.token != Symbol.IDENT )
@@ -200,6 +221,7 @@ public class Compiler {
 
 			lexer.nextToken();
 		}
+		
 		if ( lexer.token != Symbol.LEFTCURBRACKET )
 			signalError.showError("{ expected", true);
 		lexer.nextToken();
@@ -220,11 +242,14 @@ public class Compiler {
 				signalError.showError("private, or public expected");
 				qualifier = Symbol.PUBLIC;
 			}
+			
 			Type t = type();
+			
 			if ( lexer.token != Symbol.IDENT )
 				signalError.showError("Identifier expected");
 			String name = lexer.getStringValue();
 			lexer.nextToken();
+			
 			if ( lexer.token == Symbol.LEFTPAR )
 				methodDec(t, name, qualifier);
 			else if ( qualifier != Symbol.PRIVATE )
@@ -232,9 +257,12 @@ public class Compiler {
 			else
 				instanceVarDec(t, name);
 		}
+		
 		if ( lexer.token != Symbol.RIGHTCURBRACKET )
 			signalError.showError("public/private or \"}\" expected");
 		lexer.nextToken();
+		
+		return currentClass;
 
 	}
 

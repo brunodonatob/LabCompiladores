@@ -173,7 +173,7 @@ public class Compiler {
 				signalError.showError("Metaobject 'nce' does not take parameters");
 		}
 		else if ( name.equals("ce") ) {
-			if ( metaobjectParamList.size() != 3 && metaobjectParamList.size() != 4 )
+			if ( metaobject.size() != 3 && metaobjectParamList.size() != 4 )
 				signalError.showError("Metaobject 'ce' take three or four parameters");
 			if ( !( metaobjectParamList.get(0) instanceof Integer)  )
 				signalError.showError("The first parameter of metaobject 'ce' should be an integer number");
@@ -204,20 +204,38 @@ public class Compiler {
 		 */
 		if ( lexer.token != Symbol.CLASS ) signalError.showError("'class' expected");
 		lexer.nextToken();
+
+		// Class name
 		if ( lexer.token != Symbol.IDENT )
 			signalError.show(ErrorSignaller.ident_expected);
 		String className = lexer.getStringValue();
 		
 		this.currentClass = new KraClass(className);
 		
+		// Verifica se essa classe ja existe
+		if(symbolTable.getInGlobal(className) != null) {
+			signalError.showError("A class with name '"+ className +"' was already declared");
+		}
+		
 		symbolTable.putInGlobal(className, currentClass);
 		lexer.nextToken();
 		
+		// Extends
 		if ( lexer.token == Symbol.EXTENDS ) {
 			lexer.nextToken();
 			if ( lexer.token != Symbol.IDENT )
 				signalError.show(ErrorSignaller.ident_expected);
 			String superclassName = lexer.getStringValue();
+			
+			// Verifica se a superclasse eh igual a classe atual
+			if(className.equals(superclassName)) {
+				signalError.showError("A class cannot inherit from itself");
+			}
+			
+			// Verifica se a superclasse existe
+			if(symbolTable.getInGlobal(superclassName) == null) {
+				signalError.showError("Superclass '"+ className +"' must be declared before");
+			}
 
 			lexer.nextToken();
 		}
@@ -289,11 +307,15 @@ public class Compiler {
 		 * MethodDec ::= Qualifier Return Id "("[ FormalParamDec ] ")" "{"
 		 *                StatementList "}"
 		 */
-
+		ParamList paramList;
+		
+		
 		this.currentMethod = new MethodDec(name, type, qualifier);
 		
 		lexer.nextToken();
-		if ( lexer.token != Symbol.RIGHTPAR ) formalParamDec();
+		if ( lexer.token != Symbol.RIGHTPAR ) 
+			paramList = formalParamDec();
+		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 
 		lexer.nextToken();
@@ -328,22 +350,32 @@ public class Compiler {
 		}
 	}
 
-	private void formalParamDec() {
+	private ParamList formalParamDec() {
 		// FormalParamDec ::= ParamDec { "," ParamDec }
+		
+		ParamList paramList = new ParamList();
 
-		paramDec();
+		paramList.addElement(paramDec());
 		while (lexer.token == Symbol.COMMA) {
 			lexer.nextToken();
-			paramDec();
+			paramList.addElement(paramDec());
 		}
 	}
 
-	private void paramDec() {
+	private Parameter paramDec() {
 		// ParamDec ::= Type Id
+		
+		String parameterName;
 
 		Type t = type();
 		if ( lexer.token != Symbol.IDENT ) signalError.showError("Identifier expected");
-		Parameter p = new Parameter(lexer.getStringValue(), t);
+		
+		parameterName = lexer.getStringValue();
+		Parameter p = new Parameter(parameterName, t);
+		
+		if(symbolTable.getInLocal(key) != null) {
+			signalError.showError("Parameter '"++"' has already been declared");
+		}
 		this.symbolTable.putInLocal(p.getName(), p);
 		
 		lexer.nextToken();

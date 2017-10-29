@@ -1,8 +1,8 @@
 Relat�rio do Compilador
 
-33 de um total de 139 erros que deveriam ser sinalizados n�o o foram (23%)
-27 erros foram sinalizados na linha errada (19%)
-45 erros foram sinalizados em 79 arquivos sem erro (56%)
+32 de um total de 117 erros que deveriam ser sinalizados n�o o foram (27%)
+11 erros foram sinalizados na linha errada (9%)
+35 erros foram sinalizados em 68 arquivos sem erro (51%)
 
 Erros que deveriam ser sinalizados mas n�o foram:
 
@@ -13,8 +13,6 @@ ER-SEM79.KRA, 5, Method 'run' of class 'Program' cannot take parameters
 ER-SEM12.KRA, 9, operator '+' of 'int' expects an 'int' value (comp.Compiler.simpleExpr())
 
 ER-SEM38.KRA, 20, Type error: type of the right-hand side of the assignment is not a subclass of the left-hand side (comp.Compiler.assignExprLocalDec())
-
-ER-SIN55.KRA, 6, Identifier expected (comp.Compiler.classDec())
 
 ER-SEM58.KRA, 21, Incompatible types cannot be compared with '!=' because the result will always be 'false' (comp.Compiler.expr())
 
@@ -75,53 +73,17 @@ ER-SEM68.KRA, 12, Method 'p' was not found in class 'Program' or its superclasse
 ######################################################
 Erros que foram sinalizados na linha errada:
 
-ER-SEM74.KRA
-    correto:    12, '.' or '=' expected after identifier OR statement expected (comp.Compiler.factor())
-    sinalizado: 6, public/private or "}" expected
-
-ER-SEM66.KRA
-    correto:    9, Static method 'p' was not found in class 'Program' (comp.Compiler.factor())
-    sinalizado: 8, public/private or "}" expected
-
-ER-SEM69.KRA
-    correto:    11, '.' or '=' expected after identifier OR statement expected (comp.Compiler.factor())
-    sinalizado: 7, public/private or "}" expected
-
-ER-SEM65.KRA
-    correto:    9, Static method 'p' was not found in class 'Program' (comp.Compiler.factor())
-    sinalizado: 8, public/private or "}" expected
-
 ER-SIN60.KRA
     correto:    14, '(' expected after 'while' (comp.Compiler.doWhileStatement())
     sinalizado: 11, Variable 'do' was not declared
-
-ER-SEM75.KRA
-    correto:    14, Static method 'm' was not found in class 'A' (comp.Compiler.factor())
-    sinalizado: 6, public/private or "}" expected
 
 ER-SEM89.KRA
     correto:    13, boolean expression expected in a do-while statement (comp.Compiler.doWhileStatement())
     sinalizado: 10, Variable 'do' was not declared
 
-ER-SEM72.KRA
-    correto:    11, Call to 'this' in a static method (comp.Compiler.factor())
-    sinalizado: 10, public/private or "}" expected
-
 ER-SEM51.KRA
     correto:    17, Method 'put' is being redefined in subclass 'B' with a signature different from the method of superclass 'A' (comp.Compiler.methodDec())
     sinalizado: 29, Attempt to call a method on a variable of a basic type
-
-ER-SEM87.KRA
-    correto:    11, Call to 'this' in a static method (comp.Compiler.factor())
-    sinalizado: 10, public/private or "}" expected
-
-ER-SEM71.KRA
-    correto:    9, Attempt to access an instance variable using 'this' in a static method (comp.Compiler.factor())
-    sinalizado: 8, public/private or "}" expected
-
-ER-SEM84.KRA
-    correto:    12, Redeclaration of final method 'finalMethod' (comp.Compiler.methodDec())
-    sinalizado: 6, public/private or "}" expected
 
 ER-SEM35.KRA
     correto:    9, Illegal 'return' statement. Method returns 'void' (comp.Compiler.returnStatement())
@@ -130,18 +92,6 @@ ER-SEM35.KRA
 ER-SEM28.KRA
     correto:    10, Variable 'i' is being redeclared (comp.Compiler.localDec())
     sinalizado: 24, Attempt to call a method on a variable of a basic type
-
-ER-SEM76.KRA
-    correto:    16, Method 'm' was not found in class 'A' or its superclasses (comp.Compiler.factor())
-    sinalizado: 6, public/private or "}" expected
-
-ER-SEM73.KRA
-    correto:    10, Redefinition of static method 'm' (comp.Compiler.methodDec())
-    sinalizado: 7, public/private or "}" expected
-
-ER-SEM83.KRA
-    correto:    7, Class 'Program' is inheriting from final class 'Terra' 
-    sinalizado: 3, 'class' expected
 
 ER-SEM60.KRA
     correto:    21, Method 'p' was not found in the public interface of 'A' or its superclasses (comp.Compiler.factor())
@@ -155,25 +105,9 @@ ER-SEM31.KRA
     correto:    10, Method 'i' has name equal to an instance variable (comp.Compiler.methodDec())
     sinalizado: 22, Attempt to call a method on a variable of a basic type
 
-ER-SEM67.KRA
-    correto:    12, '.' or '=' expected after an identifier OR statement expected (comp.Compiler.factor())
-    sinalizado: 11, public/private or "}" expected
-
-ER-SEM63.KRA
-    correto:    12, '.' or '=' expected after an identifier OR statement expected (comp.Compiler.factor())
-    sinalizado: 8, public/private or "}" expected
-
-ER-SEM85.KRA
-    correto:    6, 'final' method in a 'final' class (comp.Compiler.methodDec())
-    sinalizado: 5, 'class' expected
-
 ER-SEM88.KRA
     correto:    13, boolean expression expected in a do-while statement (comp.Compiler.doWhileStatement())
     sinalizado: 10, Variable 'do' was not declared
-
-ER-SEM64.KRA
-    correto:    11, '.' or '=' expected after an identifier OR statement expected (comp.Compiler.factor())
-    sinalizado: 7, public/private or "}" expected
 
 ER-SEM70.KRA
     correto:    10, Method 'm' is being redefined (comp.Compiler.methodDec())
@@ -186,11 +120,7 @@ ER-SEM30.KRA
 ######################################################
 Erros que foram sinalizados mas n�o deveriam ter sido:
 
-OK-SEM01.KRA, 4, public/private or "}" expected
-
 OK-SEM14.KRA, 26, Variable 'a2' was not declared
-
-OK-GER18.KRA, 11, public/private or "}" expected
 
 OK-SEM09.KRA, 17, Attempt to call a method on a variable of a basic type
 
@@ -202,10 +132,6 @@ OK-CHK06.KRA, 18, Attempt to call a method on a variable of a basic type
 
 OK-GER05.KRA, 37, Attempt to call a method on a variable of a basic type
 
-OK-SEM18.KRA, 11, public/private or "}" expected
-
-OK-SEM20.KRA, 6, public/private or "}" expected
-
 OK-GER09.KRA, 56, Attempt to call a method on a variable of a basic type
 
 OK-GER06.KRA, 49, Attempt to call a method on a variable of a basic type
@@ -214,9 +140,7 @@ OK-CHK03.KRA, 38, Attempt to call a method on a variable of a basic type
 
 OK-SIN08.KRA, 24, Attempt to call a method on a variable of a basic type
 
-OK-GER22.KRA, 14, public/private or "}" expected
-
-OK-GER20.KRA, 12, public/private or "}" expected
+OK-GER22.KRA, 18, Variable 'j' was not declared
 
 OK-SIN06.KRA, 17, Attempt to call a method on a variable of a basic type
 
@@ -236,23 +160,17 @@ OK-GER07.KRA, 28, Attempt to call a method on a variable of a basic type
 
 OK-LEX03.KRA, 26, Attempt to call a method on a variable of a basic type
 
-OK-GER17.KRA, 11, public/private or "}" expected
-
 OK-GER08.KRA, 40, Attempt to call a method on a variable of a basic type
 
 OK-GER02.KRA, 35, Attempt to call a method on a variable of a basic type
 
 OK-SIN09.KRA, 43, Attempt to call a method on a variable of a basic type
 
-OK-SEM17.KRA, 11, public/private or "}" expected
-
 OK-LEX10.KRA, 24, Attempt to call a method on a variable of a basic type
 
 OK-SEM04.KRA, 18, Variable 'b' was not declared
 
 OK-GER12.KRA, 61, Attempt to call a method on a variable of a basic type
-
-OK-GER19.KRA, 11, public/private or "}" expected
 
 OK-GER15.KRA, 134, Attempt to call a method on a variable of a basic type
 
@@ -261,8 +179,6 @@ OK-SEM12.KRA, 22, Identifier expected
 OK-SEM11.KRA, 24, Attempt to call a method on a variable of a basic type
 
 OK-GER03.KRA, 64, Attempt to call a method on a variable of a basic type
-
-OK-GER23.KRA, 17, Variable 'j' was not declared
 
 OK-CHK05.KRA, 40, Attempt to call a method on a variable of a basic type
 
@@ -273,8 +189,6 @@ OK-GER01.KRA, 99, Attempt to call a method on a variable of a basic type
 OK-SEM10.KRA, 44, Attempt to call a method on a variable of a basic type
 
 OK-CHK04.KRA, 38, Attempt to call a method on a variable of a basic type
-
-OK-SEM19.KRA, 12, public/private or "}" expected
 
 ######################################################
 Em todos os testes abaixo, o compilador sinalizou o erro na linha correta (quando o teste tinha erros) ou n�o sinalizou o erro (quando o teste N�O tinha erros). Mas � necess�rio conferir se as mensagens emitidas pelo compilador s�o compat�veis com as mensagens de erro sugeridas pelas chamadas aos metaobjetos dos testes. 
@@ -461,19 +375,9 @@ The compiler message was: "Identifier expected"
 The 'ce' message is:      "Identifier expected"
 
 
-ER-SIN56.KRA
-The compiler message was: "public/private or "}" expected"
-The 'ce' message is:      "Identifier expected"
-
-
 ER-SIN15.KRA
 The compiler message was: ") expected"
 The 'ce' message is:      "')' expected"
-
-
-ER-SIN52.KRA
-The compiler message was: "public/private or "}" expected"
-The 'ce' message is:      "'public' or 'private' expected"
 
 
 ER-SIN12.KRA
@@ -551,19 +455,9 @@ The compiler message was: "Identifier expected"
 The 'ce' message is:      "Command 'read' expects a variable"
 
 
-ER-SIN54.KRA
-The compiler message was: "Identifier expected"
-The 'ce' message is:      "Identifier expected"
-
-
 ER-SIN23.KRA
 The compiler message was: "} expected"
 The 'ce' message is:      "Statement expected"
-
-
-ER-SEM82.KRA
-The compiler message was: "public/private or "}" expected"
-The 'ce' message is:      "Method 'run' cannot be static"
 
 
 ER-SIN20.KRA
@@ -584,6 +478,11 @@ The 'ce' message is:      "Class expected"
 ER-SEM11.KRA
 The compiler message was: "boolean expression expected."
 The 'ce' message is:      "non-boolean expression in 'while' command"
+
+
+ER-SIN63.KRA
+The compiler message was: "';' expected"
+The 'ce' message is:      "';' expected"
 
 
 ER-LEX05.KRA
@@ -609,11 +508,6 @@ The 'ce' message is:      "'public', 'private' or '}' expected"
 ER-SIN32.KRA
 The compiler message was: "Type expected"
 The 'ce' message is:      "Type expected"
-
-
-ER-SIN51.KRA
-The compiler message was: "Identifier expected"
-The 'ce' message is:      "Identifier expected"
 
 
 ER-SIN27.KRA
@@ -664,11 +558,6 @@ The 'ce' message is:      "Identifier expected"
 ER-SEM19.KRA
 The compiler message was: "Variable 'Program' was not declared"
 The 'ce' message is:      "Type 'Program' was not found"
-
-
-ER-SIN53.KRA
-The compiler message was: "public/private or "}" expected"
-The 'ce' message is:      "'private' expected"
 
 
 ER-SIN39.KRA

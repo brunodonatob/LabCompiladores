@@ -1,5 +1,5 @@
 /*
-  Universidade Federal de São Carlos
+  Universidade Federal de Sao Carlos
 
    Bruno Donato  RA 587460
    Ingrid Santos RA 620300
@@ -84,26 +84,29 @@ public class Compiler {
 	}
 
 	private Program program(ArrayList<CompilationError> compilationErrorList) {
-		// Program ::= KraClass { KraClass }
-		ArrayList<MetaobjectCall> metaobjectCallList = new ArrayList<>();
-		ArrayList<KraClass> kraClassList = new ArrayList<>();
-		Program program = new Program(kraClassList, metaobjectCallList, compilationErrorList);
-		try {
-			while ( lexer.token == Symbol.MOCall ) {
-				metaobjectCallList.add(metaobjectCall());
-			}
-			classDec();
-			while ( lexer.token == Symbol.CLASS )
-				classDec();
-			if ( lexer.token != Symbol.EOF ) {
-				signalError.showError("End of file expected");
-			}
-		}
-		catch( RuntimeException e) {
-			// if there was an exception, there is a compilation signalError
-		}
-		return program;
-	}
+        // Program ::= KraClass { KraClass }
+        ArrayList<MetaobjectCall> metaobjectCallList = new ArrayList<>();
+        ArrayList<KraClass> kraClassList = new ArrayList<>();
+        Program program = new Program(kraClassList, metaobjectCallList, compilationErrorList);
+        try {
+            while ( lexer.token == Symbol.MOCall ) {
+                metaobjectCallList.add(metaobjectCall());
+            }
+            classDec();
+            while ( lexer.token == Symbol.CLASS )
+                classDec();
+            if ( lexer.token != Symbol.EOF ) {
+                signalError.showError("End of file expected");
+            }
+        }
+        catch( CompilerError e) {
+            // if there was an exception, there is a compilation signalError
+        }
+        catch ( RuntimeException e ) {
+            e.printStackTrace();
+        }
+        return program;
+    }
 
 	/**  parses a metaobject call as <code>{@literal @}ce(...)</code> in <br>
      * <code>
@@ -455,18 +458,13 @@ public class Compiler {
 
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
-				// token � uma classe declarada textualmente antes desta
-				// instru��o
+				// token eh uma classe declarada textualmente antes desta
+				// instrucao
 				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue())) ) {
 			/*
-			 * uma declara��o de vari�vel. 'lexer.token' � o tipo da vari�vel
-<<<<<<< HEAD
-			 * 
-			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec 
-=======
+			 * uma declaracao de variavel. 'lexer.token' eh o tipo da variavel
 			 *
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
->>>>>>> 66d6a614c9cd30304bc10b178905fc8844af8217
 			 * LocalDec ::= Type IdList ``;''
 			 */
 			localDec();

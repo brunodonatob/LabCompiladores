@@ -47,9 +47,14 @@ public class KraClass extends Type {
 		   if(m.getName().equals(methodName)) {
 			   return m;
 		   }
-		}
+	   }
 	   
 	   return null;
+   }
+   
+   public void addInstanceVariable(InstanceVariable instanceVariable) {
+		// TODO Auto-generated method stub
+		
 	}
    
    private String name;

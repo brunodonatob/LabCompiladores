@@ -83,20 +83,18 @@ public class Compiler {
 		return program;
 	}
 
-	//  Program := { MOCall } ClassDec { ClassDec }
 	private Program program(ArrayList<CompilationError> compilationErrorList) {
         // Program ::= KraClass { KraClass }
         ArrayList<MetaobjectCall> metaobjectCallList = new ArrayList<>();
         ArrayList<KraClass> kraClassList = new ArrayList<>();
-        
         Program program = new Program(kraClassList, metaobjectCallList, compilationErrorList);
         try {
             while ( lexer.token == Symbol.MOCall ) {
                 metaobjectCallList.add(metaobjectCall());
             }
-            kraClassList.add(classDec());
+            classDec();
             while ( lexer.token == Symbol.CLASS )
-            	kraClassList.add(classDec());
+                classDec();
             if ( lexer.token != Symbol.EOF ) {
                 signalError.showError("End of file expected");
             }
@@ -107,23 +105,6 @@ public class Compiler {
         catch ( RuntimeException e ) {
             e.printStackTrace();
         }
-        
-        // Verifica se existe a classe Program
-        Boolean programExists = false;
-        for(KraClass k: kraClassList) {
-        	if(k.getName().equals("Program")) {
-        		programExists = true;
-        		
-        		// Verifica se existe metodo 'run' na classe Program
-        		if(k.searchPublicMethod("run") == null) {
-        			signalError.showError("There must be a public method called 'run' in class Program");
-        		}
-        	}
-        }
-        if(programExists == false) {
-        	signalError.showError("There must be a class called 'Program'");
-        }
-        
         return program;
     }
 
@@ -187,12 +168,11 @@ public class Compiler {
 		return new MetaobjectCall(name, metaobjectParamList);
 	}
 
-	//  ClassDec := “class” Id [ “extends” Id ] “{” MemberList “}”
-	private KraClass classDec() {
-		// Note que os metodos desta classe nao correspondem exatamente as
+	private void classDec() {
+		// Note que os m�todos desta classe n�o correspondem exatamente �s
 		// regras
-		// da gramatica. Este metodo classDec, por exemplo, implementa
-		// a producao KraClass (veja abaixo) e partes de outras producoes.
+		// da gram�tica. Este m�todo classDec, por exemplo, implementa
+		// a produ��o KraClass (veja abaixo) e partes de outras produ��es.
 
 		/*
 		 * KraClass ::= ``class'' Id [ ``extends'' Id ] "{" MemberList "}"
@@ -212,7 +192,6 @@ public class Compiler {
 		
 		symbolTable.putInGlobal(className, currentClass);
 		lexer.nextToken();
-		
 		if ( lexer.token == Symbol.EXTENDS ) {
 			lexer.nextToken();
 			if ( lexer.token != Symbol.IDENT )
@@ -221,7 +200,6 @@ public class Compiler {
 
 			lexer.nextToken();
 		}
-		
 		if ( lexer.token != Symbol.LEFTCURBRACKET )
 			signalError.showError("{ expected", true);
 		lexer.nextToken();
@@ -242,14 +220,11 @@ public class Compiler {
 				signalError.showError("private, or public expected");
 				qualifier = Symbol.PUBLIC;
 			}
-			
 			Type t = type();
-			
 			if ( lexer.token != Symbol.IDENT )
 				signalError.showError("Identifier expected");
 			String name = lexer.getStringValue();
 			lexer.nextToken();
-			
 			if ( lexer.token == Symbol.LEFTPAR )
 				methodDec(t, name, qualifier);
 			else if ( qualifier != Symbol.PRIVATE )
@@ -257,12 +232,9 @@ public class Compiler {
 			else
 				instanceVarDec(t, name);
 		}
-		
 		if ( lexer.token != Symbol.RIGHTCURBRACKET )
 			signalError.showError("public/private or \"}\" expected");
 		lexer.nextToken();
-		
-		return currentClass;
 
 	}
 
@@ -483,7 +455,6 @@ public class Compiler {
 	 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
 	 */
 	private Expr assignExprLocalDec() {
-
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
 				// token eh uma classe declarada textualmente antes desta
@@ -496,15 +467,30 @@ public class Compiler {
 			 * LocalDec ::= Type IdList ``;''
 			 */
 			localDec();
+			
+			if ( lexer.token != Symbol.SEMICOLON )
+				signalError.showError("';' expected", true);
+			else
+				lexer.nextToken();
 		}
 		else {
 			/*
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ]
 			 */
-			expr();
+			
+			Expr expressao = expr();	
+			
+			
 			if ( lexer.token == Symbol.ASSIGN ) {
 				lexer.nextToken();
-				expr();
+				
+				Expr e = expr();
+				
+				// Ainda tem que organizar classes pra fazer isso
+				if(e.getType() != expressao.getType()) {
+					signalError.showError("Wrong type error");
+				} 
+				
 				if ( lexer.token != Symbol.SEMICOLON )
 					signalError.showError("';' expected", true);
 				else
@@ -662,6 +648,11 @@ public class Compiler {
 				|| op == Symbol.LT || op == Symbol.GE || op == Symbol.GT ) {
 			lexer.nextToken();
 			Expr right = simpleExpr();
+			
+			// Ainda precisa arrumar classes pra isso funcionar
+			if(left.getType() != right.getType() && (op == Symbol.NEQ || op == Symbol.EQ))
+				signalError.showError("Incompatible types cannot be compared");
+			
 			left = new CompositeExpr(left, op, right);
 		}
 		return left;
@@ -675,6 +666,14 @@ public class Compiler {
 				|| op == Symbol.OR) {
 			lexer.nextToken();
 			Expr right = term();
+			
+			if(left.getType().getName().equals("boolean") && op != Symbol.OR)
+				signalError.showError("Type boolean does not support this operation");
+				
+			if(left.getType() != right.getType()) 
+				signalError.showError("Type error");
+
+			
 			left = new CompositeExpr(left, op, right);
 		}
 		return left;
@@ -759,6 +758,8 @@ public class Compiler {
 		case NOT:
 			lexer.nextToken();
 			anExpr = expr();
+			if(anExpr.getType().getName().equals("int"))
+				signalError.showError("Operator ! does not accept int values");
 			return new UnaryExpr(anExpr, Symbol.NOT);
 			// ObjectCreation ::= "new" Id "(" ")"
 		case NEW:

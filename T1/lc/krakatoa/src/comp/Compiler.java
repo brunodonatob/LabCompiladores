@@ -114,9 +114,15 @@ public class Compiler {
         	if(k.getName().equals("Program")) {
         		programExists = true;
         		
+        		MethodDec method = k.searchPublicMethod("run");
         		// Verifica se existe metodo 'run' na classe Program
-        		if(k.searchPublicMethod("run") == null) {
+        		if(method == null) {
         			signalError.showError("There must be a public method called 'run' in class Program");
+        		}
+        		
+        		// Verifica se metodo run nao tem parametros
+        		if(method.getNumberOfParameters() != 0) {
+        			signalError.showError("Run method must be parameterless");
         		}
         	}
         }
@@ -287,13 +293,12 @@ public class Compiler {
 	private void instanceVarDec(Type type, String name) {
 		// InstVarDec ::= [ "static" ] "private" Type IdList ";"
 
-		// Verifica se a variavel ja existe na LocalTable
-		if(this.symbolTable.getInLocal(name) != null) {
+		// Verifica se a variavel ja foi declarada na classe
+		if(this.currentClass.searchInstanceVariable(name) != null) {
 			signalError.showError("Instance variable '"+ name +"' has already been declared");
 		}
 		
 		InstanceVariable instanceVariable = new InstanceVariable(name, type);
-		this.symbolTable.putInLocal(name, instanceVariable);
 		this.currentClass.addInstanceVariable(instanceVariable);
 		
 		while (lexer.token == Symbol.COMMA) {
@@ -302,11 +307,11 @@ public class Compiler {
 				signalError.showError("Identifier expected");
 			String variableName = lexer.getStringValue();
 			
-			if(this.symbolTable.getInLocal(variableName) != null) {
+			// Verifica se a variavel ja foi declarada na classe
+			if(this.currentClass.searchInstanceVariable(variableName) != null) {
 				signalError.showError("Instance variable '"+ variableName +"' has already been declared");
 			}
 			instanceVariable = new InstanceVariable(variableName, type);
-			this.symbolTable.putInLocal(variableName, instanceVariable);
 			this.currentClass.addInstanceVariable(instanceVariable);
 			lexer.nextToken();
 		}
@@ -320,14 +325,12 @@ public class Compiler {
 		 * MethodDec ::= Qualifier Return Id "("[ FormalParamDec ] ")" "{"
 		 *                StatementList "}"
 		 */
-		ParamList paramList;
-		
 		
 		this.currentMethod = new MethodDec(name, type, qualifier);
 		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.RIGHTPAR ) 
-			paramList = formalParamDec();
+			formalParamDec();
 		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 
@@ -344,6 +347,9 @@ public class Compiler {
 		this.currentClass.addMethod(this.currentMethod);
 		
 		this.currentMethod = null;
+		
+		// Remove todas as variaveis locais da localTable
+		this.symbolTable.removeLocalIdent();
 
 	}
 
@@ -364,38 +370,33 @@ public class Compiler {
 		}
 	}
 
-	private ParamList formalParamDec() {
+	private void formalParamDec() {
 		// FormalParamDec ::= ParamDec { "," ParamDec }
-		
-		ParamList paramList = new ParamList();
 
-		//paramList.addElement(paramDec());
+		this.currentMethod.addParameter(paramDec());
 		while (lexer.token == Symbol.COMMA) {
 			lexer.nextToken();
-			//paramList.addElement(paramDec());
+			this.currentMethod.addParameter(paramDec());
 		}
-		
-		return paramList;
 	}
 
-	private void paramDec() {
+	private Parameter paramDec() {
 		// ParamDec ::= Type Id
-		
-		String parameterName;
 
 		Type t = type();
 		if ( lexer.token != Symbol.IDENT ) signalError.showError("Identifier expected");
 		
-		parameterName = lexer.getStringValue();
-		Parameter p = new Parameter(parameterName, t);
+		Parameter parameter = new Parameter(lexer.getStringValue(), t);
 		
 		// Verifica se parametro ja existe
-		if(symbolTable.getInLocal(parameterName) != null) {
-			signalError.showError("A variable with name '"+ parameterName +"' has already been declared");
+		if(symbolTable.getInLocal(parameter.getName()) != null) {
+			signalError.showError("A variable with name '"+ parameter.getName() +"' has already been declared");
 		}
-		this.symbolTable.putInLocal(p.getName(), p);
+		this.symbolTable.putInLocal(parameter.getName(), parameter);
 		
 		lexer.nextToken();
+		
+		return parameter;
 	}
 
 	private Type type() {
@@ -416,9 +417,12 @@ public class Compiler {
 			result = Type.stringType;
 			break;
 		case IDENT:
-			// # corrija: fa�a uma busca na TS para buscar a classe
 			// IDENT deve ser uma classe.
-			result = null;
+			result = this.symbolTable.getInGlobal(lexer.getStringValue());
+			
+			if(result == null) {
+				this.signalError.showError("Class with identifier '"+ lexer.getStringValue() +"' not found");
+			}
 			break;
 		default:
 			signalError.showError("Type expected");

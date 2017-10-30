@@ -120,9 +120,19 @@ public class Compiler {
         			signalError.showError("There must be a public method called 'run' in class Program");
         		}
         		
-        		// Verifica se metodo run nao tem parametros
+        		// Verifica se o metodo run nao tem parametros
         		if(method.getNumberOfParameters() != 0) {
         			signalError.showError("Run method must be parameterless");
+        		}
+        		
+        		// Verifica se o metodo run eh public
+        		if(method.getQualifier() != Symbol.PUBLIC) {
+        			signalError.showError("Run method must be public");
+        		}
+        		
+        		// Verifica se o metodo run retorna void
+        		if(method.getReturnType() != Type.voidType) {
+        			signalError.showError("Run method must return void");
         		}
         	}
         }
@@ -448,10 +458,10 @@ public class Compiler {
 		// statements always begin with an identifier, if, read, write, ...
 		while ((tk = lexer.token) != Symbol.RIGHTCURBRACKET
 				&& tk != Symbol.ELSE)
-			statement();
+			this.currentMethod.addStatement(statement());
 	}
 
-	private WhileStatement statement() {
+	private Statement statement() {
 		/*
 		 * Statement ::= Assignment ``;'' | IfStat |WhileStat | MessageSend
 		 *                ``;'' | ReturnStat ``;'' | ReadStat ``;'' | WriteStat ``;'' |
@@ -471,8 +481,7 @@ public class Compiler {
 			assertStatement();
 			break;
 		case RETURN:
-			returnStatement();
-			break;
+			return returnStatement();
 		case READ:
 			readStatement();
 			break;
@@ -592,6 +601,7 @@ public class Compiler {
 		return anExprList;
 	}
 
+	// WhileStat := “while” “(” Expression “)” Statement
 	private WhileStatement whileStatement() {
 
 		lexer.nextToken();
@@ -627,7 +637,7 @@ public class Compiler {
 		}
 	}
 
-	private void returnStatement() {
+	private ReturnStatement returnStatement() {
 
 		lexer.nextToken();
 		Expr e = expr();
@@ -642,6 +652,8 @@ public class Compiler {
 		if(!e.getType().isCompatible(this.currentMethod.getReturnType())) {
 			this.signalError.showError("This expression is not compatible with the method return type");			
 		}
+		
+		return new ReturnStatement(e);
 	}
 
 	private void readStatement() {

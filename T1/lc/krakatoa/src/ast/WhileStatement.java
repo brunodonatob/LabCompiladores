@@ -10,6 +10,7 @@ public class WhileStatement extends Statement {
 	public Expr getExpr() {
 		return expr;
 	}
+	
 	public Statement getStatement() {
 		return statement;
 	}
@@ -28,7 +29,6 @@ public class WhileStatement extends Statement {
 		pw.add();
 		this.statement.genKra(pw);
 		pw.sub();
-		
 	}
 	
 	private Expr expr;

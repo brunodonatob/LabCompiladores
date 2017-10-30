@@ -12,6 +12,7 @@ public class KraClass extends Type {
       super(name);
       publicMethodList = new ArrayList<>();
       instanceVariableList = new InstanceVariableList();
+      this.superclass = null;
    }
    
    public String getCname() {
@@ -71,6 +72,22 @@ public class KraClass extends Type {
 	   }
 	   
 	   return null;
+   }
+   
+   public void genKra(PW pw) {
+	   pw.print("class "+ this.name);
+	   
+	   if(this.superclass != null) {
+		   pw.print(" extends " + superclass.getName());
+	   }
+	   
+	   pw.println(" {");
+	   pw.add();
+	   
+	   this.instanceVariableList.genKra(pw);
+	   
+	   pw.sub();
+	   pw.println("}");
    }
    
    private String name;

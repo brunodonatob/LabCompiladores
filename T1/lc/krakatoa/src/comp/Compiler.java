@@ -173,7 +173,7 @@ public class Compiler {
 				signalError.showError("Metaobject 'nce' does not take parameters");
 		}
 		else if ( name.equals("ce") ) {
-			if ( metaobject.size() != 3 && metaobjectParamList.size() != 4 )
+			if ( metaobjectParamList.size() != 3 && metaobjectParamList.size() != 4 )
 				signalError.showError("Metaobject 'ce' take three or four parameters");
 			if ( !( metaobjectParamList.get(0) instanceof Integer)  )
 				signalError.showError("The first parameter of metaobject 'ce' should be an integer number");
@@ -355,14 +355,16 @@ public class Compiler {
 		
 		ParamList paramList = new ParamList();
 
-		paramList.addElement(paramDec());
+		//paramList.addElement(paramDec());
 		while (lexer.token == Symbol.COMMA) {
 			lexer.nextToken();
-			paramList.addElement(paramDec());
+			//paramList.addElement(paramDec());
 		}
+		
+		return paramList;
 	}
 
-	private Parameter paramDec() {
+	private void paramDec() {
 		// ParamDec ::= Type Id
 		
 		String parameterName;
@@ -374,7 +376,7 @@ public class Compiler {
 		Parameter p = new Parameter(parameterName, t);
 		
 		// Verifica se parametro ja existe
-		if(symbolTable.getInLocal(parameterName)) {
+		if(symbolTable.getInLocal(parameterName) != null) {
 			signalError.showError("A variable with name '"+ parameterName +"' has already been declared");
 		}
 		this.symbolTable.putInLocal(p.getName(), p);

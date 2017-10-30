@@ -287,14 +287,27 @@ public class Compiler {
 	private void instanceVarDec(Type type, String name) {
 		// InstVarDec ::= [ "static" ] "private" Type IdList ";"
 
-		this.currentClass.addInstanceVariable(new InstanceVariable(name, type));
+		// Verifica se a variavel ja existe na LocalTable
+		if(this.symbolTable.getInLocal(name) != null) {
+			signalError.showError("Instance variable '"+ name +"' has already been declared");
+		}
+		
+		InstanceVariable instanceVariable = new InstanceVariable(name, type);
+		this.symbolTable.putInLocal(name, instanceVariable);
+		this.currentClass.addInstanceVariable(instanceVariable);
 		
 		while (lexer.token == Symbol.COMMA) {
 			lexer.nextToken();
 			if ( lexer.token != Symbol.IDENT )
 				signalError.showError("Identifier expected");
 			String variableName = lexer.getStringValue();
-			this.currentClass.addInstanceVariable(new InstanceVariable(variableName, type));
+			
+			if(this.symbolTable.getInLocal(variableName) != null) {
+				signalError.showError("Instance variable '"+ variableName +"' has already been declared");
+			}
+			instanceVariable = new InstanceVariable(variableName, type);
+			this.symbolTable.putInLocal(variableName, instanceVariable);
+			this.currentClass.addInstanceVariable(instanceVariable);
 			lexer.nextToken();
 		}
 		if ( lexer.token != Symbol.SEMICOLON )
@@ -323,6 +336,7 @@ public class Compiler {
 
 		lexer.nextToken();
 		statementList();
+
 		if ( lexer.token != Symbol.RIGHTCURBRACKET ) signalError.showError("} expected");
 
 		lexer.nextToken();

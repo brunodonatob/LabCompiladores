@@ -14,6 +14,9 @@ public class Program {
 
 
 	public void genKra(PW pw) {
+		for(KraClass k : classList) {
+			k.genKra(pw);
+		}
 	}
 
 	public void genC(PW pw) {

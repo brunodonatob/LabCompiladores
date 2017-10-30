@@ -19,7 +19,11 @@ public class InstanceVariableList {
     public int getSize() {
         return instanceVariableList.size();
     }
+    
+	public void genKra(PW pw) {
+		// TODO Auto-generated method stub
+		
+	}
 
     private ArrayList<InstanceVariable> instanceVariableList;
-
 }

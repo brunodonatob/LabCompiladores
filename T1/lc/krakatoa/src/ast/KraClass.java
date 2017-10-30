@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /*
  * Krakatoa Class
@@ -40,6 +41,21 @@ public class KraClass extends Type {
    
    public void addMethod(MethodDec aMethod) {
 	   publicMethodList.add(aMethod);
+   }
+   
+   public InstanceVariable searchInstanceVariable(String variableName) {
+	   Iterator<InstanceVariable> instVarList =  this.instanceVariableList.elements();
+	   InstanceVariable var;
+	   
+	   while(instVarList.hasNext()) {
+		   var = instVarList.next();
+		   
+		   if(var.getName().equals(variableName)) {
+			   return var;
+		   }
+	   }
+	   
+	   return null;
    }
    
    public void addInstanceVariable(InstanceVariable instanceVariable) {

@@ -10,6 +10,7 @@ public class KraClass extends Type {
    public KraClass( String name ) {
       super(name);
       publicMethodList = new ArrayList<>();
+      instanceVariableList = new InstanceVariableList();
    }
    
    public String getCname() {
@@ -41,6 +42,10 @@ public class KraClass extends Type {
 	   publicMethodList.add(aMethod);
    }
    
+   public void addInstanceVariable(InstanceVariable instanceVariable) {
+	   instanceVariableList.addElement(instanceVariable);
+   }
+   
    public MethodDec searchPublicMethod(String methodName) {
 	   
 	   for(MethodDec m: this.publicMethodList) {
@@ -51,11 +56,6 @@ public class KraClass extends Type {
 	   
 	   return null;
    }
-   
-   public void addInstanceVariable(InstanceVariable instanceVariable) {
-		// TODO Auto-generated method stub
-		
-	}
    
    private String name;
    private KraClass superclass;

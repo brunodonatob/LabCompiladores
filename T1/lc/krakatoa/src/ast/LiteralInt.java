@@ -13,7 +13,7 @@ public class LiteralInt extends Expr {
         pw.printIdent("" + value);
     }
     
-	public void genKra(PW pw) {
+	public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
     

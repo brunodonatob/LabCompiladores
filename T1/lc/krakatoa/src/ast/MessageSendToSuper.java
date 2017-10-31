@@ -10,7 +10,7 @@ public class MessageSendToSuper extends MessageSend {
         
     }
     
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
 }

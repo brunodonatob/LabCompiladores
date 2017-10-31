@@ -10,7 +10,7 @@ public class LiteralString extends Expr {
         pw.print(literalString);
     }
     
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
     

@@ -16,7 +16,18 @@ public class IfStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		pw.print("if ( ");
+		expr.genKra(pw, false);
+		pw.println(" )");
+		pw.add();
+		ifStmt.genKra(pw);
+		pw.sub();
+		if(elseStmt != null) {
+			pw.println("else");
+			pw.add();
+			elseStmt.genKra(pw);
+			pw.sub();
+		}
 		
 	}
 	

@@ -16,7 +16,7 @@ public class LiteralBoolean extends Expr {
         return Type.booleanType;
     }
 
-	public void genKra(PW pw) {
+	public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
 	

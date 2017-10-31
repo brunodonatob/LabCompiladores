@@ -15,9 +15,9 @@ public class NewObjectExpr extends Expr {
 	}
 
 	@Override
-	public void genKra(PW pw) {
+	public void genKra(PW pw,boolean putParenthesis) {
 		pw.printIdent("new ");
-		className.genKra(pw);
+		pw.print(className.getCname());
 		pw.print("();");
 	}
 

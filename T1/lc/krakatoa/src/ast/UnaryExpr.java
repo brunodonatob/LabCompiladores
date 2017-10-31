@@ -29,8 +29,22 @@ public class UnaryExpr extends Expr {
 		expr.genC(pw, false);
 	}
 
-    public void genKra(PW pw) {
-		
+    public void genKra(PW pw,boolean putParenthesis) {
+    	switch (op) {
+		case PLUS:
+			pw.print("+");
+			break;
+		case MINUS:
+			pw.print("-");
+			break;
+		case NOT:
+			pw.print("!");
+			break;
+		default:
+			pw.print(" internal error at UnaryExpr::genKra");
+
+		}
+		expr.genC(pw, false);
 	}
     
 	@Override

@@ -13,7 +13,9 @@ public class Variable {
         return type;
     }
     
-    public void genKra(PW pw) {}
+    public void genKra(PW pw) {
+    	 pw.print(name);
+    }
     
     public void genC(PW pw) {}
 

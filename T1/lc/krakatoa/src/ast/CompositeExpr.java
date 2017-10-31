@@ -28,7 +28,7 @@ public class CompositeExpr extends Expr {
           pw.print(")");
     }
     
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
 

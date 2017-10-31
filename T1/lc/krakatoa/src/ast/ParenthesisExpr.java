@@ -12,7 +12,7 @@ public class ParenthesisExpr extends Expr {
         pw.printIdent(")");
     }
     
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
     

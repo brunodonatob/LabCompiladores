@@ -29,7 +29,7 @@ public class UnaryExpr extends Expr {
 		expr.genC(pw, false);
 	}
 
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
     

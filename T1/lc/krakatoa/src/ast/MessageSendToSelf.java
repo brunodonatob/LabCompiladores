@@ -10,7 +10,7 @@ public class MessageSendToSelf extends MessageSend {
     public void genC( PW pw, boolean putParenthesis ) {
     }
     
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
     

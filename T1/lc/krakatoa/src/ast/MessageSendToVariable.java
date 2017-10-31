@@ -11,7 +11,7 @@ public class MessageSendToVariable extends MessageSend {
         
     }
 
-    public void genKra(PW pw) {
+    public void genKra(PW pw,boolean putParenthesis) {
 		
 	}
 }    

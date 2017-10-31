@@ -368,14 +368,26 @@ public class Compiler {
 
 		Type type = type();
 		if ( lexer.token != Symbol.IDENT ) signalError.showError("Identifier expected");
+		
 		Variable v = new Variable(lexer.getStringValue(), type);
+		
+		if(this.symbolTable.getInLocal(v.getName()) != null) {
+			signalError.showError("A variable with name '"+ v.getName() +"' has already been declared");
+		}
 		this.symbolTable.putInLocal(v.getName(), v);
+		
 		lexer.nextToken();
 		while (lexer.token == Symbol.COMMA) {
 			lexer.nextToken();
 			if ( lexer.token != Symbol.IDENT )
 				signalError.showError("Identifier expected");
 			v = new Variable(lexer.getStringValue(), type);
+			
+			if(this.symbolTable.getInLocal(v.getName()) != null) {
+				signalError.showError("A variable with name '"+ v.getName() +"' has already been declared");
+			}
+			this.symbolTable.putInLocal(v.getName(), v);
+			
 			lexer.nextToken();
 		}
 	}
@@ -483,17 +495,13 @@ public class Compiler {
 		case RETURN:
 			return returnStatement();
 		case READ:
-			readStatement();
-			break;
+			return readStatement();
 		case WRITE:
-			writeStatement();
-			break;
+			return writeStatement();
 		case WRITELN:
-			writelnStatement();
-			break;
+			return writelnStatement();
 		case IF:
-			ifStatement();
-			break;
+			return ifStatement();
 		case BREAK:
 			return breakStatement();
 		case WHILE:
@@ -613,29 +621,46 @@ public class Compiler {
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
 		
+		this.isInLoop = true;
+		
 		Statement s = statement();
+		
+		this.isInLoop = false;
 		
 		return new WhileStatement(e, s);
 	}
 
-	private void ifStatement() {
+	//private DoWhileStatement doWhileStatement() {
+		//return null;
+	//}
+	
+	// IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]
+	private IfStatement ifStatement() {
 
+		Statement ifStmt = null;
+		Statement elseStmt = null;
+		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTPAR ) signalError.showError("( expected");
 		lexer.nextToken();
+		
 		Expr e = expr();
 		if(e.getType() != Type.booleanType) {
 			signalError.showError("boolean expression expected.");
 		}
+		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
-		statement();
+		ifStmt = statement();
 		if ( lexer.token == Symbol.ELSE ) {
 			lexer.nextToken();
-			statement();
+			elseStmt = statement();
 		}
+		
+		return new IfStatement(e, ifStmt, elseStmt);
 	}
 
+	// ReturnStat := “return” Expression
 	private ReturnStatement returnStatement() {
 
 		lexer.nextToken();
@@ -655,25 +680,71 @@ public class Compiler {
 		return new ReturnStatement(e);
 	}
 
-	private void readStatement() {
+	// ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
+	private ReadStatement readStatement() {
+		/*
+		 * ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
+		 * LeftValue := [ (“this” | Id ) “.” ] Id
+		 * Id := Letter { Letter | Digit | “ ” }
+		 * 
+		 * "variables (local, parameter, static or instance)
+		 *  of the type int ou String"
+		 * 
+		 * */
+		
+		ArrayList<Variable> idList = new ArrayList<>();
+		boolean isInstanceVariable = false;
+		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTPAR ) signalError.showError("( expected");
 		lexer.nextToken();
+		
 		while (true) {
 			if ( lexer.token == Symbol.THIS ) {
 				lexer.nextToken();
 				if ( lexer.token != Symbol.DOT ) signalError.showError(". expected");
 				lexer.nextToken();
+				isInstanceVariable = true;
 			}
 			if ( lexer.token != Symbol.IDENT )
 				signalError.show(ErrorSignaller.ident_expected);
 
 			String name = lexer.getStringValue();
+			
+			if(isInstanceVariable) {
+				InstanceVariable instVar = this.currentClass.searchInstanceVariable(name);
+				
+				if(instVar == null) {
+					signalError.showError("Instance variable '"+ name +"' has not been declared");
+				}
+				
+				if(instVar.getType() == Type.booleanType) {
+					signalError.showError("Read statement does not accept boolean variables");
+				}
+				
+				idList.add(instVar);
+			}
+			else {
+				Variable var = this.symbolTable.getInLocal(name);
+				
+				if(var == null) {
+					signalError.showError("Variable '"+ name +"' has not been declared");
+				}
+				
+				if(var.getType() == Type.booleanType) {
+					signalError.showError("Read statement does not accept boolean variables");
+				}
+							
+				idList.add(var);
+			}
+			
 			lexer.nextToken();
 			if ( lexer.token == Symbol.COMMA )
 				lexer.nextToken();
 			else
 				break;
+			
+			isInstanceVariable = false;
 		}
 
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
@@ -681,36 +752,85 @@ public class Compiler {
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
 		lexer.nextToken();
+		
+		if(idList.size() < 1) {
+			signalError.showError("Read statement must have at least one parameter");
+		}
+		
+		return new ReadStatement(idList);
 	}
 
-	private void writeStatement() {
+	// WriteStat := “write” “(” ExpressionList “)”
+	private WriteStatement writeStatement() {
+		/*
+		 *  ExpressionList := Expression { “,” Expression }
+		 *  Expression := SimpleExpression [ Relation SimpleExpression ]
+		 *  SimpleExpression := Term { LowOperator Term }
+		 * 
+		 * */
 
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTPAR ) signalError.showError("( expected");
 		lexer.nextToken();
-		exprList();
+		
+		ExprList exprList = exprList();
+		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
 		lexer.nextToken();
+		
+		if(exprList.getSize() < 1) {
+			signalError.showError("Write statement must have at least one parameter");
+		}
+		
+		if(exprList.hasBoolean()) {
+			signalError.showError("Boolean expressions cannot be parameters to write");
+		}
+		
+		return new WriteStatement(exprList);
 	}
 
-	private void writelnStatement() {
+	// WriteStat := “writeln” “(” ExpressionList “)”
+	private WritelnStatement writelnStatement() {
+		/*
+		 *  ExpressionList := Expression { “,” Expression }
+		 *  Expression := SimpleExpression [ Relation SimpleExpression ]
+		 *  SimpleExpression := Term { LowOperator Term }
+		 * 
+		 * */
 
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTPAR ) signalError.showError("( expected");
 		lexer.nextToken();
-		exprList();
+		
+		ExprList exprList = exprList();
+		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
 		lexer.nextToken();
+		
+		if(exprList.getSize() < 1) {
+			signalError.showError("Write statement must have at least one parameter");
+		}
+		
+		if(exprList.hasBoolean()) {
+			signalError.showError("Boolean expressions cannot be parameters to write");
+		}
+		
+		return new WritelnStatement(exprList);
 	}
 
 	// "break" ";"
 	private BreakStatement breakStatement() {
+		
+		if(this.isInLoop == false) {
+			signalError.showError("'break' statement found outside a 'while' statement");
+		}
+		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
@@ -723,6 +843,7 @@ public class Compiler {
 		lexer.nextToken();
 	}
 
+	// ExpressionList := Expression { “,” Expression }
 	private ExprList exprList() {
 		// ExpressionList ::= Expression { "," Expression }
 
@@ -735,10 +856,12 @@ public class Compiler {
 		return anExprList;
 	}
 
+	// Expression := SimpleExpression [ Relation SimpleExpression ]
 	private Expr expr() {
 
 		Expr left = simpleExpr();
 		Symbol op = lexer.token;
+		
 		if ( op == Symbol.EQ || op == Symbol.NEQ || op == Symbol.LE
 				|| op == Symbol.LT || op == Symbol.GE || op == Symbol.GT ) {
 			lexer.nextToken();
@@ -750,6 +873,7 @@ public class Compiler {
 			
 			left = new CompositeExpr(left, op, right);
 		}
+		
 		return left;
 	}
 
@@ -1072,5 +1196,6 @@ public class Compiler {
 	private ErrorSignaller	signalError;
 	private MethodDec 		currentMethod;
 	private KraClass 		currentClass;
+	private boolean			isInLoop = false;
 
 }

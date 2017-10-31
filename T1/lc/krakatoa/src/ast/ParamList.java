@@ -19,7 +19,16 @@ public class ParamList {
     public int getSize() {
         return paramList.size();
     }
+    
+	public void genKra(PW pw) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void genC(PW pw) {
+		// TODO Auto-generated method stub
+		
+	}
 
     private ArrayList<Variable> paramList;
-
 }

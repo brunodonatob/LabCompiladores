@@ -522,12 +522,14 @@ public class Compiler {
 			return breakStatement();
 		case WHILE:
 			return whileStatement();
+		case DO:
+			doWhileStatement();
+			break;
 		case SEMICOLON:
 			nullStatement();
 			break;
 		case LEFTCURBRACKET:
-			compositeStatement();
-			break;
+			return compositeStatement();
 		default:
 			signalError.showError("Statement expected");
 		}
@@ -646,9 +648,34 @@ public class Compiler {
 		return new WhileStatement(e, s);
 	}
 
-	//private DoWhileStatement doWhileStatement() {
-		//return null;
-	//}
+	// DoWhileStat := “do” CompStatement “while” “(” Expression “)”
+	private void doWhileStatement() {
+		
+		lexer.nextToken();
+		
+		this.isInLoop = true;
+		
+		compositeStatement();
+		
+		this.isInLoop = false;
+		
+		if(lexer.token != Symbol.WHILE)
+			signalError.showError("'while' expected");
+		lexer.nextToken();
+		
+		if ( lexer.token != Symbol.LEFTPAR ) signalError.showError("( expected");
+		lexer.nextToken();
+		
+		Expr e = expr();
+		
+		if(e.getType() != Type.booleanType) {
+			signalError.showError("boolean expression expected.");
+		}
+		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
+		lexer.nextToken();
+		
+		// return new DoWhileStatement(compStatement, expr);
+	}
 	
 	// IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]
 	private IfStatement ifStatement() {

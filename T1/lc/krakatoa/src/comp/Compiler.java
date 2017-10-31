@@ -336,6 +336,8 @@ public class Compiler {
 		 *                StatementList "}"
 		 */
 		
+		ArrayList<Statement> statementList;
+		
 		this.currentMethod = new MethodDec(name, type, qualifier);
 		
 		lexer.nextToken();
@@ -348,7 +350,11 @@ public class Compiler {
 		if ( lexer.token != Symbol.LEFTCURBRACKET ) signalError.showError("{ expected");
 
 		lexer.nextToken();
-		statementList();
+		statementList = statementList();
+		
+		for(Statement stmt : statementList) {
+			this.currentMethod.addStatement(stmt);
+		}
 
 		if ( lexer.token != Symbol.RIGHTCURBRACKET ) signalError.showError("} expected");
 
@@ -454,23 +460,33 @@ public class Compiler {
 		return result;
 	}
 
-	private void compositeStatement() {
+	private CompositeStatement compositeStatement() {
 
+		CompositeStatement compStatement;
+		
 		lexer.nextToken();
-		statementList();
+		
+		compStatement = new CompositeStatement(statementList());
+		
 		if ( lexer.token != Symbol.RIGHTCURBRACKET )
 			signalError.showError("} expected");
 		else
 			lexer.nextToken();
+		
+		return compStatement;
 	}
 
-	private void statementList() {
+	private ArrayList<Statement> statementList() {
 		// CompStatement ::= "{" { Statement } "}"
+		ArrayList<Statement> statementList = new ArrayList<>();
+		
 		Symbol tk;
 		// statements always begin with an identifier, if, read, write, ...
 		while ((tk = lexer.token) != Symbol.RIGHTCURBRACKET
 				&& tk != Symbol.ELSE)
-			this.currentMethod.addStatement(statement());
+			statementList.add(statement());
+		
+		return statementList;
 	}
 
 	private Statement statement() {

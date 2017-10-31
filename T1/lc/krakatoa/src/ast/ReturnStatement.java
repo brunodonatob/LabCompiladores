@@ -18,8 +18,9 @@ public class ReturnStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
-		
+		pw.printIdent("return ");
+		expr.genKra(pw);
+		pw.println("");
 	}
 	
 	private Expr expr;

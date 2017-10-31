@@ -12,6 +12,7 @@ public class KraClass extends Type {
 	
    public KraClass( String name ) {
       super(name);
+      this.name = name;
       publicMethodList = new ArrayList<>();
       privateMethodList = new ArrayList<>();
       instanceVariableList = new InstanceVariableList();

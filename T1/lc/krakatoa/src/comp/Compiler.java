@@ -523,8 +523,7 @@ public class Compiler {
 		case WHILE:
 			return whileStatement();
 		case DO:
-			doWhileStatement();
-			break;
+			return doWhileStatement();
 		case SEMICOLON:
 			nullStatement();
 			break;
@@ -649,13 +648,13 @@ public class Compiler {
 	}
 
 	// DoWhileStat := “do” CompStatement “while” “(” Expression “)”
-	private void doWhileStatement() {
-		
+	private DoWhileStatement doWhileStatement() {
+				
 		lexer.nextToken();
 		
 		this.isInLoop = true;
 		
-		compositeStatement();
+		CompositeStatement compStatement = compositeStatement();
 		
 		this.isInLoop = false;
 		
@@ -674,7 +673,7 @@ public class Compiler {
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
 		
-		// return new DoWhileStatement(compStatement, expr);
+		return new DoWhileStatement(compStatement, e);
 	}
 	
 	// IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]

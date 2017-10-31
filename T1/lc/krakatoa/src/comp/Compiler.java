@@ -903,6 +903,11 @@ public class Compiler {
 
 	// Expression := SimpleExpression [ Relation SimpleExpression ]
 	private Expr expr() {
+		/*
+		 *  SimpleExpression := Term { LowOperator Term }
+		 *  Relation := “==” | “<” | “>” | “<=” | “>=” | “! =”
+		 *  
+		 * */
 
 		Expr left = simpleExpr();
 		Symbol op = lexer.token;
@@ -912,7 +917,12 @@ public class Compiler {
 			lexer.nextToken();
 			Expr right = simpleExpr();
 			
-			if(left.getType() != right.getType() && (op == Symbol.NEQ || op == Symbol.EQ))
+			// The comparison operators <, <=, >, >= can only be applied to int values
+			if((op == Symbol.LE || op == Symbol.LT || op == Symbol.GE 
+					|| op == Symbol.GT) && left.getType() != Type.intType)
+				signalError.showError("Comparison operators can only be applied to int values");
+			
+			if(!left.getType().isCompatible(right.getType()))
 				signalError.showError("Incompatible types cannot be compared");
 			
 			left = new CompositeExpr(left, op, right);
@@ -923,6 +933,11 @@ public class Compiler {
 
 	// SimpleExpression := Term { LowOperator Term }
 	private Expr simpleExpr() {
+		/*
+		 * Term := SignalFactor { HighOperator SignalFactor }
+		 * LowOperator := “+” | “−” | “||”
+		 * 
+		 * */
 		Symbol op;
 
 		Expr left = term();
@@ -931,7 +946,7 @@ public class Compiler {
 			lexer.nextToken();
 			Expr right = term();
 			
-			if(left.getType().getName().equals("boolean") && op != Symbol.OR)
+			if((left.getType() == Type.booleanType) && op != Symbol.OR)
 				signalError.showError("Type boolean does not support this operation");
 				
 			if(left.getType() != right.getType()) 
@@ -1075,32 +1090,33 @@ public class Compiler {
 				signalError.showError("Identifier expected");
 			messageName = lexer.getStringValue();
 			/*
-			 * para fazer as confer�ncias sem�nticas, procure por 'messageName'
+			 * para fazer as conferencias semanticas, procure por 'messageName'
 			 * na superclasse/superclasse da superclasse etc
 			 */
-			Variable va = this.symbolTable.getInLocal(messageName);
-			Type typeV = va.getType();
+
+			KraClass superClass = this.currentClass.getSuperclass();
+			MethodDec aSuperMethod = null;
 			
-			KraClass classV = (KraClass ) typeV;
-			
-			MethodDec method = null;
-			
-			while(classV != null) {
-				 method = classV.searchPublicMethod(messageName);
-				if(method == null)
-					classV = classV.getSuperclass();
-				else
-					break;
+			if(superClass == null) {
+				this.signalError.showError("There is no superclass of " + this.currentClass.getName());
 			}
 			
-			if(method == null) {
+			do {
+				aSuperMethod = superClass.searchMethod(messageName);
+				if(aSuperMethod != null)
+					break;
+				
+				superClass = superClass.getSuperclass();
+			} while(superClass != null);
+			
+			if(aSuperMethod == null) {
 				this.signalError.showError("Method '" + messageName + "' does not exist in any superclass");								
 			}
 			
 			lexer.nextToken();
 			exprList = realParameters();
 			
-			return new PrimaryExpr("super",method,exprList);
+			return new PrimaryExpr("super", aSuperMethod, exprList);
 		case IDENT:
 			/*
           	 * PrimaryExpr ::=
@@ -1168,13 +1184,13 @@ public class Compiler {
 						KraClass cvar = (KraClass) tvar;
 						
 						InstanceVariable v3 = classVar.searchInstanceVariable(messageName);
-						Variable var3 = this.symbolTable.getInLocal(messageName);
+						MethodDec aMethod = this.currentClass.searchMethod(messageName);
 						
 						if(v3 == null) {
 							this.signalError.showError("Variable '" + messageName + "' does not exist in class '"+cvar.getName()+"'");								
 						}
 						
-						return new PrimaryExpr(avar,var2,var3);
+						return new PrimaryExpr(avar, var2, aMethod);
 
 					}
 					else if ( lexer.token == Symbol.LEFTPAR ) {
@@ -1236,8 +1252,8 @@ public class Compiler {
 			if ( lexer.token != Symbol.DOT ) {
 				// only 'this'
 				// retorne um objeto da ASA que representa 'this'
-				// confira se n�o estamos em um m�todo est�tico
-				return new PrimaryExpr("this");
+				// confira se nao estamos em um metodo estatico
+				return new PrimaryExpr("this", this.currentClass);
 			}
 			else {
 				lexer.nextToken();
@@ -1292,7 +1308,7 @@ public class Compiler {
 					// retorne o objeto da ASA que representa "this" "." Id
 					/*
 					 * confira se a classe corrente realmente possui uma
-					 * vari�vel de inst�ncia 'ident'
+					 * variavel de instancia 'ident'
 					 */
 					InstanceVariable var = currentClass.searchInstanceVariable(id);
 					
@@ -1300,10 +1316,10 @@ public class Compiler {
 						this.signalError.showError("Variable '" + id + "' does not exist in the current class");								
 					}
 					
-					Variable v = this.symbolTable.getInLocal(id);
+					InstanceVariable instVar = this.currentClass.searchInstanceVariable(id);
 
 					
-					return new PrimaryExpr("this",v);
+					return new PrimaryExpr("this", instVar);
 				}
 			}
 		default:
@@ -1332,7 +1348,7 @@ public class Compiler {
 
 	}
 
-	private SymbolTable		symbolTable;
+	private SymbolTable 	symbolTable;
 	private Lexer			lexer;
 	private ErrorSignaller	signalError;
 	private MethodDec 		currentMethod;

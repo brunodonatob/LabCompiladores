@@ -38,12 +38,12 @@ public class PrimaryExpr extends Expr {
 	}
 
 	
-
+	// "this" 
 	public PrimaryExpr(String string) {
 		this.str = string;
 	}
 
-
+	// "this" "." Id "(" [ ExpressionList ] ")" e  "super" "." Id "(" [ ExpressionList ] ")"
 	public PrimaryExpr(String string, MethodDec amethod, ExprList exprList) {
 		this.exprs = exprList;
 		this.str = string;
@@ -51,12 +51,14 @@ public class PrimaryExpr extends Expr {
 	}
 
 
+	// "this" "." Id
 	public PrimaryExpr(String string, Variable var) {
 		this.id = var;
 		this.str = string;
 	}
 
 
+	 // "this" "." Id "." Id "(" [ ExpressionList ] ")"
 	public PrimaryExpr(String string,Variable var2, MethodDec amethod, ExprList exprList) {
 		this.exprs = exprList;
 		this.str = string;
@@ -68,20 +70,11 @@ public class PrimaryExpr extends Expr {
 
 	@Override
 	public void genC(PW pw, boolean putParenthesis) {
+	}
+	
+	@Override
+	public void genKra(PW pw) {
 		
-		// Isso aqui tá um caos ainda
-		if(str!=null)
-			pw.print(str);
-
-			if(id != null)
-				pw.print( id.getName() );
-			if(method != null)
-				method.genKra(pw);
-			if(exprs != null)
-				exprs.genC(pw);
-			
-		
-
 	}
 
 	@Override

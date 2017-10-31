@@ -1075,9 +1075,29 @@ public class Compiler {
 			 * para fazer as confer�ncias sem�nticas, procure por 'messageName'
 			 * na superclasse/superclasse da superclasse etc
 			 */
+			Variable va = this.symbolTable.getInLocal(messageName);
+			Type typeV = va.getType();
+			
+			KraClass classV = (KraClass ) typeV;
+			
+			MethodDec method = null;
+			
+			while(classV != null) {
+				 method = classV.searchPublicMethod(messageName);
+				if(method == null)
+					classV = classV.getSuperclass();
+				else
+					break;
+			}
+			
+			if(method == null) {
+				this.signalError.showError("Method '" + messageName + "' does not exist in any superclass");								
+			}
+			
 			lexer.nextToken();
 			exprList = realParameters();
-			break;
+			
+			return new PrimaryExpr("super",method,exprList);
 		case IDENT:
 			/*
           	 * PrimaryExpr ::=

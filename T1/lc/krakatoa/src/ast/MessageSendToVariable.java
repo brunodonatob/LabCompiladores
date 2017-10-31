@@ -11,5 +11,7 @@ public class MessageSendToVariable extends MessageSend {
         
     }
 
-    
+    public void genKra(PW pw) {
+		
+	}
 }    

@@ -18,6 +18,10 @@ public class SignalExpr extends Expr {
        if ( putParenthesis )
           pw.print(")");
     }
+    
+    public void genKra(PW pw) {
+		
+	}
 
     @Override
 	public Type getType() {

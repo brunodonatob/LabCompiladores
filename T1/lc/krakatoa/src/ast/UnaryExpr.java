@@ -29,6 +29,10 @@ public class UnaryExpr extends Expr {
 		expr.genC(pw, false);
 	}
 
+    public void genKra(PW pw) {
+		
+	}
+    
 	@Override
 	public Type getType() {
 		return expr.getType();

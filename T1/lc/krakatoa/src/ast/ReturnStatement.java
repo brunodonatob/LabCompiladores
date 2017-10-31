@@ -19,7 +19,7 @@ public class ReturnStatement extends Statement {
 	@Override
 	public void genKra(PW pw) {
 		pw.printIdent("return ");
-		expr.genKra(pw);
+		expr.genKra(pw,false);
 		pw.println("");
 	}
 	

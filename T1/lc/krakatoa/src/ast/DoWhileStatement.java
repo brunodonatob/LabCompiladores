@@ -22,7 +22,7 @@ public class DoWhileStatement extends Statement {
 		pw.print("");
 		pw.print("}");
 		pw.print("while ( ");
-		expr.genKra(pw);
+		expr.genKra(pw,false);
 		pw.print(")");
 		
 		

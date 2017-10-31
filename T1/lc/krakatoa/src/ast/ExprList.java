@@ -11,6 +11,20 @@ public class ExprList {
     public void addElement( Expr expr ) {
         exprList.add(expr);
     }
+    
+	public int getSize() {
+		return exprList.size();
+	}
+
+	public boolean hasBoolean() {
+		for(Expr e : exprList) {
+			if(e.getType() == Type.booleanType)
+				return true;
+		}
+		return false;
+	}
+	
+	public void genKra(PW pw) {}
 
     public void genC( PW pw ) {
 
@@ -23,5 +37,4 @@ public class ExprList {
     }
 
     private ArrayList<Expr> exprList;
-
 }

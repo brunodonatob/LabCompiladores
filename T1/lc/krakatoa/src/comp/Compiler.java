@@ -396,6 +396,11 @@ public class Compiler {
 			
 			lexer.nextToken();
 		}
+		
+		if ( lexer.token != Symbol.SEMICOLON )
+			signalError.showError("';' expected", true);
+		else
+			lexer.nextToken();
 	}
 
 	private void formalParamDec() {
@@ -566,13 +571,11 @@ public class Compiler {
 	}
 
 	/*
-	 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
+	 * AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec
 	 */
 	private Expr assignExprLocalDec() {
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
-				// token eh uma classe declarada textualmente antes desta
-				// instrucao
 				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue())) ) {
 			/*
 			 * uma declaracao de variavel. 'lexer.token' eh o tipo da variavel
@@ -582,26 +585,23 @@ public class Compiler {
 			 */
 			localDec();
 			
-			if ( lexer.token != Symbol.SEMICOLON )
-				signalError.showError("';' expected", true);
-			else
-				lexer.nextToken();
+
 		}
 		else {
 			/*
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ]
 			 */
 			
-			Expr expressao = expr();	
+			Expr exprLeft = expr();	
 			
 			
 			if ( lexer.token == Symbol.ASSIGN ) {
 				lexer.nextToken();
 				
-				Expr e = expr();
+				Expr exprRight = expr();
 				
 				// Ainda tem que organizar classes pra fazer isso
-				if(e.getType() != expressao.getType()) {
+				if(exprLeft.getType().isCompatible(exprRight.getType())) {
 					signalError.showError("Wrong type error");
 				} 
 				

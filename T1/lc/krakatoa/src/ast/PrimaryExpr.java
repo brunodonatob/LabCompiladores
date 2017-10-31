@@ -70,20 +70,11 @@ public class PrimaryExpr extends Expr {
 
 	@Override
 	public void genC(PW pw, boolean putParenthesis) {
+	}
+	
+	@Override
+	public void genKra(PW pw) {
 		
-		// Isso aqui tá um caos ainda
-		if(str!=null)
-			pw.print(str);
-
-			if(id != null)
-				pw.print( id.getName() );
-			if(method != null)
-				method.genKra(pw);
-			if(exprs != null)
-				exprs.genC(pw);
-			
-		
-
 	}
 
 	@Override

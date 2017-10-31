@@ -10,6 +10,10 @@ public class VariableExpr extends Expr {
         pw.print( v.getName() );
     }
     
+    public void genKra(PW pw) {
+		
+	}
+    
     public Type getType() {
         return v.getType();
     }

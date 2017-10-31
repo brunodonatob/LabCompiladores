@@ -6,6 +6,10 @@ public class NullExpr extends Expr {
       pw.printIdent("NULL");
    }
    
+   public void genKra(PW pw) {
+		
+	}
+   
    public Type getType() {
       //# corrija
       return null;

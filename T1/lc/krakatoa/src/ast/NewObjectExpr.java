@@ -17,7 +17,7 @@ public class NewObjectExpr extends Expr {
 	@Override
 	public void genKra(PW pw) {
 		pw.printIdent("new ");
-		className.genKra(pw);
+		pw.print(className.getCname());
 		pw.print("();");
 	}
 

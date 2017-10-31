@@ -24,7 +24,14 @@ public class ExprList {
 		return false;
 	}
 	
-	public void genKra(PW pw) {}
+	public void genKra(PW pw) {
+		 int size = exprList.size();
+	        for ( Expr e : exprList ) {
+	        	e.genC(pw, false);
+	            if ( --size > 0 )
+	                pw.print(", ");
+	        }
+	}
 
     public void genC( PW pw ) {
 

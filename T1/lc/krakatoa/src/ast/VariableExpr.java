@@ -11,7 +11,7 @@ public class VariableExpr extends Expr {
     }
     
     public void genKra(PW pw) {
-		
+    	 pw.print( v.getName() );
 	}
     
     public Type getType() {

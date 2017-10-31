@@ -12,6 +12,11 @@ public class Variable {
     public Type getType() {
         return type;
     }
+    
+    public void genKra(PW pw) {}
+    
+    public void genC(PW pw) {}
+
 
     private String name;
     private Type type;

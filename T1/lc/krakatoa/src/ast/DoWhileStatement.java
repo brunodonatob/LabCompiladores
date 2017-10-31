@@ -15,7 +15,16 @@ public class DoWhileStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent("do {");
+		pw.add();
+		compStatement.genKra(pw);
+		pw.sub();
+		pw.print("");
+		pw.print("}");
+		pw.print("while ( ");
+		expr.genKra(pw);
+		pw.print(")");
+		
 		
 	}
 

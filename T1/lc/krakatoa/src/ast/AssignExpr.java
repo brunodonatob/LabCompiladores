@@ -15,8 +15,10 @@ public class AssignExpr extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
-
+		exprLeft.genKra(pw);
+		pw.print(" = ");
+		exprRight.genKra(pw);
+		//pw.print(";");
 	}
 
 	private Expr exprLeft;

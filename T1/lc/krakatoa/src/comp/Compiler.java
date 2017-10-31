@@ -369,13 +369,16 @@ public class Compiler {
 
 	}
 
-	private void localDec() {
+	private Statement localDec() {
 		// LocalDec ::= Type IdList ";"
-
+		
+		ArrayList<String> idList = new ArrayList<>();
+		
 		Type type = type();
 		if ( lexer.token != Symbol.IDENT ) signalError.showError("Identifier expected");
 		
 		Variable v = new Variable(lexer.getStringValue(), type);
+		idList.add(lexer.getStringValue());
 		
 		if(this.symbolTable.getInLocal(v.getName()) != null) {
 			signalError.showError("A variable with name '"+ v.getName() +"' has already been declared");
@@ -388,6 +391,7 @@ public class Compiler {
 			if ( lexer.token != Symbol.IDENT )
 				signalError.showError("Identifier expected");
 			v = new Variable(lexer.getStringValue(), type);
+			idList.add(lexer.getStringValue());
 			
 			if(this.symbolTable.getInLocal(v.getName()) != null) {
 				signalError.showError("A variable with name '"+ v.getName() +"' has already been declared");
@@ -401,6 +405,8 @@ public class Compiler {
 			signalError.showError("';' expected", true);
 		else
 			lexer.nextToken();
+		
+		return new LocalDec(type, idList);
 	}
 
 	private void formalParamDec() {
@@ -508,8 +514,7 @@ public class Compiler {
 		case INT:
 		case BOOLEAN:
 		case STRING:
-			assignExprLocalDec();
-			break;
+			return assignExprLocalDec();
 		case ASSERT:
 			assertStatement();
 			break;
@@ -573,7 +578,7 @@ public class Compiler {
 	/*
 	 * AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec
 	 */
-	private Expr assignExprLocalDec() {
+	private Statement assignExprLocalDec() {
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
 				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue())) ) {
@@ -583,24 +588,21 @@ public class Compiler {
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ] | LocalDec
 			 * LocalDec ::= Type IdList ``;''
 			 */
-			localDec();
-			
-
+			return localDec();
 		}
 		else {
 			/*
 			 * AssignExprLocalDec ::= Expression [ ``$=$'' Expression ]
 			 */
 			
-			Expr exprLeft = expr();	
-			
+			Expr exprLeft = expr();
+			Expr exprRight = null;
 			
 			if ( lexer.token == Symbol.ASSIGN ) {
 				lexer.nextToken();
 				
-				Expr exprRight = expr();
+				exprRight = expr();
 				
-				// Ainda tem que organizar classes pra fazer isso
 				if(exprLeft.getType().isCompatible(exprRight.getType())) {
 					signalError.showError("Wrong type error");
 				} 
@@ -610,8 +612,9 @@ public class Compiler {
 				else
 					lexer.nextToken();
 			}
+			
+			return new AssignExpr(exprLeft, exprRight);
 		}
-		return null;
 	}
 
 	private ExprList realParameters() {
@@ -919,7 +922,7 @@ public class Compiler {
 		return left;
 	}
 
-
+	// SimpleExpression := Term { LowOperator Term }
 	private Expr simpleExpr() {
 		Symbol op;
 
@@ -954,6 +957,7 @@ public class Compiler {
 		return left;
 	}
 
+	// Term := SignalFactor { HighOperator SignalFactor }
 	private Expr signalFactor() {
 		Symbol op;
 		if ( (op = lexer.token) == Symbol.PLUS || op == Symbol.MINUS ) {

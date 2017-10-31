@@ -951,13 +951,41 @@ public class Compiler {
 						 * sinalize um erro neste ponto.
 						 */
 						
+						Variable avar = this.symbolTable.getInLocal(firstId);
+						if(avar == null) {
+							this.signalError.showError("Variable '" + firstId + "' was not declared");
+						}
+
+						Type typeVar = avar.getType();
+						
+						KraClass classVar = (KraClass ) typeVar;
+						InstanceVariable var = classVar.searchInstanceVariable(id);
+						
+						if(var == null) {
+							this.signalError.showError("Variable '" + id + "' does not exist in class '"+classVar.getName()+"'");								
+						}
 						
 						lexer.nextToken();
 						if ( lexer.token != Symbol.IDENT )
 							signalError.showError("Identifier expected");
 						messageName = lexer.getStringValue();
-						lexer.nextToken();
-						exprList = this.realParameters();
+						
+						Variable var2 = this.symbolTable.getInLocal(id);
+						if(var2 == null) {
+							this.signalError.showError("Variable '" + id + "' was not declared");
+						}
+						
+						Type tvar = var2.getType();
+						KraClass cvar = (KraClass) tvar;
+						
+						InstanceVariable v3 = classVar.searchInstanceVariable(messageName);
+						Variable var3 = this.symbolTable.getInLocal(messageName);
+						
+						if(v3 == null) {
+							this.signalError.showError("Variable '" + messageName + "' does not exist in class '"+cvar.getName()+"'");								
+						}
+						
+						return new PrimaryExpr(avar,var2,var3);
 
 					}
 					else if ( lexer.token == Symbol.LEFTPAR ) {
@@ -986,6 +1014,23 @@ public class Compiler {
 					}
 					else {
 						// retorne o objeto da ASA que representa Id "." Id
+						Variable avar = this.symbolTable.getInLocal(firstId);
+						if(avar == null) {
+							this.signalError.showError("Variable '" + firstId + "' was not declared");
+						}
+						Type typeVar = avar.getType();
+						
+						KraClass classVar = (KraClass ) typeVar;
+						InstanceVariable var = classVar.searchInstanceVariable(id);
+						Variable v = this.symbolTable.getInLocal(id);
+
+						
+						if(var == null) {
+							this.signalError.showError("Variable '" + id + "' does not exist in class '"+classVar.getName()+"'");								
+						}
+						
+						
+						return new PrimaryExpr(avar,v);
 					}	}
 			}
 			break;
@@ -1034,8 +1079,25 @@ public class Compiler {
 					lexer.nextToken();
 					if ( lexer.token != Symbol.IDENT )
 						signalError.showError("Identifier expected");
+					
+					InstanceVariable var = currentClass.searchInstanceVariable(id);
+					
+					if(var == null) {
+						this.signalError.showError("Variable '" + id + "' does not exist in the current class");								
+					}
+					
+					Variable v = this.symbolTable.getInLocal(id);
+
 					lexer.nextToken();
+					
+					MethodDec amethod = currentClass.searchPublicMethod(lexer.getStringValue());
+					if(amethod == null) {
+						this.signalError.showError("Method '" + lexer.getStringValue() + "' is not a public method of '" + 
+								currentClass.getName() +"'");								
+					}
 					exprList = this.realParameters();
+					
+					return new PrimaryExpr("this",v,amethod,exprList);
 				}
 				else {
 					// retorne o objeto da ASA que representa "this" "." Id
@@ -1043,10 +1105,18 @@ public class Compiler {
 					 * confira se a classe corrente realmente possui uma
 					 * vari�vel de inst�ncia 'ident'
 					 */
-					return null;
+					InstanceVariable var = currentClass.searchInstanceVariable(id);
+					
+					if(var == null) {
+						this.signalError.showError("Variable '" + id + "' does not exist in the current class");								
+					}
+					
+					Variable v = this.symbolTable.getInLocal(id);
+
+					
+					return new PrimaryExpr("this",v);
 				}
 			}
-			break;
 		default:
 			signalError.showError("Expression expected");
 		}

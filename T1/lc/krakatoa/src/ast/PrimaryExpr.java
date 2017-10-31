@@ -3,6 +3,8 @@ package ast;
 public class PrimaryExpr extends Expr {
 	
 	Variable id = null;
+	Variable var2 = null;
+	Variable var3 = null;
 	private ExprList exprs = null;
 	private MethodDec method = null;
 	private String str = null;
@@ -14,7 +16,10 @@ public class PrimaryExpr extends Expr {
 	
 	
 	// Id "." Id 
-	// .....................
+	public PrimaryExpr(Variable avar, Variable v) {
+		this.var2 = v;
+		this.id = avar;
+	}
 	
 	
 	// Id "." Id "(" [ ExpressionList ] ")"
@@ -25,7 +30,13 @@ public class PrimaryExpr extends Expr {
 	}
 	
 	// Id "." Id "." Id "(" [ ExpressionList ] ")"
-	// ....................
+
+	public PrimaryExpr(Variable avar, Variable var2, Variable var3) {
+		this.id = avar;
+		this.var2 = var2;
+		this.var3 = var3;
+	}
+
 	
 
 	public PrimaryExpr(String string) {
@@ -38,6 +49,21 @@ public class PrimaryExpr extends Expr {
 		this.str = string;
 		this.method = amethod;
 	}
+
+
+	public PrimaryExpr(String string, Variable var) {
+		this.id = var;
+		this.str = string;
+	}
+
+
+	public PrimaryExpr(String string,Variable var2, MethodDec amethod, ExprList exprList) {
+		this.exprs = exprList;
+		this.str = string;
+		this.method = amethod;
+		this.id = var2;
+	}
+
 
 
 	@Override

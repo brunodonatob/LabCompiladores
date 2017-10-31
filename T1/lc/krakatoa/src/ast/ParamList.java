@@ -5,14 +5,14 @@ import java.util.*;
 public class ParamList {
 
     public ParamList() {
-       paramList = new ArrayList<Variable>();
+       paramList = new ArrayList<Parameter>();
     }
 
-    public void addElement(Variable v) {
+    public void addElement(Parameter v) {
        paramList.add(v);
     }
 
-    public Iterator<Variable> elements() {
+    public Iterator<Parameter> elements() {
         return paramList.iterator();
     }
 
@@ -21,8 +21,18 @@ public class ParamList {
     }
     
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		Iterator<Parameter> pList = this.elements();
 		
+		if(pList.hasNext()) {
+			Parameter p = pList.next();
+			p.genKra(pw);
+			
+			while(pList.hasNext()) {
+				p = pList.next();
+				pw.print(", ");
+				p.genKra(pw);				
+			}
+		}
 	}
 	
 	public void genC(PW pw) {
@@ -30,5 +40,5 @@ public class ParamList {
 		
 	}
 
-    private ArrayList<Variable> paramList;
+    private ArrayList<Parameter> paramList;
 }

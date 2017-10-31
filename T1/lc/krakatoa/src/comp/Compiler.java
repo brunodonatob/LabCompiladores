@@ -903,6 +903,11 @@ public class Compiler {
 
 	// Expression := SimpleExpression [ Relation SimpleExpression ]
 	private Expr expr() {
+		/*
+		 *  SimpleExpression := Term { LowOperator Term }
+		 *  Relation := “==” | “<” | “>” | “<=” | “>=” | “! =”
+		 *  
+		 * */
 
 		Expr left = simpleExpr();
 		Symbol op = lexer.token;
@@ -912,7 +917,12 @@ public class Compiler {
 			lexer.nextToken();
 			Expr right = simpleExpr();
 			
-			if(left.getType() != right.getType() && (op == Symbol.NEQ || op == Symbol.EQ))
+			// The comparison operators <, <=, >, >= can only be applied to int values
+			if((op == Symbol.LE || op == Symbol.LT || op == Symbol.GE 
+					|| op == Symbol.GT) && left.getType() != Type.intType)
+				signalError.showError("Comparison operators can only be applied to int values");
+			
+			if(!left.getType().isCompatible(right.getType()))
 				signalError.showError("Incompatible types cannot be compared");
 			
 			left = new CompositeExpr(left, op, right);
@@ -923,6 +933,11 @@ public class Compiler {
 
 	// SimpleExpression := Term { LowOperator Term }
 	private Expr simpleExpr() {
+		/*
+		 * Term := SignalFactor { HighOperator SignalFactor }
+		 * LowOperator := “+” | “−” | “||”
+		 * 
+		 * */
 		Symbol op;
 
 		Expr left = term();
@@ -931,7 +946,7 @@ public class Compiler {
 			lexer.nextToken();
 			Expr right = term();
 			
-			if(left.getType().getName().equals("boolean") && op != Symbol.OR)
+			if((left.getType() == Type.booleanType) && op != Symbol.OR)
 				signalError.showError("Type boolean does not support this operation");
 				
 			if(left.getType() != right.getType()) 

@@ -51,7 +51,7 @@ public class MethodDec {
 		}
 		
 		pw.sub();
-		pw.println("}");
+		pw.printIdent("}\n");
 		
 	}
 	

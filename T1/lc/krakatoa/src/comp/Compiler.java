@@ -930,7 +930,7 @@ public class Compiler {
 				}
 				// Id
 				// retorne um objeto da ASA que representa um identificador
-				return null;
+				return  new PrimaryExpr(avar);
 			}
 			else { // Id "."
 				lexer.nextToken(); // coma o "."
@@ -942,7 +942,7 @@ public class Compiler {
 					lexer.nextToken();
 					id = lexer.getStringValue();
 					if ( lexer.token == Symbol.DOT ) {
-						// Id "." Id "." Id "(" [ ExpressionList ] ")"
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													
 						/*
 						 * se o compilador permite vari�veis est�ticas, � poss�vel
 						 * ter esta op��o, como
@@ -950,6 +950,8 @@ public class Compiler {
 						 * Contudo, se vari�veis est�ticas n�o estiver nas especifica��es,
 						 * sinalize um erro neste ponto.
 						 */
+						
+						
 						lexer.nextToken();
 						if ( lexer.token != Symbol.IDENT )
 							signalError.showError("Identifier expected");
@@ -979,15 +981,12 @@ public class Compiler {
 						}
 						
 						exprList = this.realParameters();
-						/*
-						 * para fazer as confer�ncias sem�nticas, procure por
-						 * m�todo 'ident' na classe de 'firstId'
-						 */
+						
+						return new PrimaryExpr(avar,amethod,exprList);
 					}
 					else {
 						// retorne o objeto da ASA que representa Id "." Id
-					}
-				}
+					}	}
 			}
 			break;
 		case THIS:
@@ -1004,7 +1003,7 @@ public class Compiler {
 				// only 'this'
 				// retorne um objeto da ASA que representa 'this'
 				// confira se n�o estamos em um m�todo est�tico
-				return null;
+				return new PrimaryExpr("this");
 			}
 			else {
 				lexer.nextToken();
@@ -1019,7 +1018,16 @@ public class Compiler {
 					 * Confira se a classe corrente possui um m�todo cujo nome �
 					 * 'ident' e que pode tomar os par�metros de ExpressionList
 					 */
+					
+					MethodDec amethod = currentClass.searchPublicMethod(id);
+					if(amethod == null) {
+						this.signalError.showError("Method '" + id + "' is not a public method of '" + 
+								currentClass.getName() +"'");								
+					}
+					
 					exprList = this.realParameters();
+					
+					return new PrimaryExpr("this",amethod,exprList);
 				}
 				else if ( lexer.token == Symbol.DOT ) {
 					// "this" "." Id "." Id "(" [ ExpressionList ] ")"

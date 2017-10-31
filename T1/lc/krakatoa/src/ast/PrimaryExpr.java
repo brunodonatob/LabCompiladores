@@ -74,7 +74,7 @@ public class PrimaryExpr extends Expr {
 	
 	@Override
 	public void genKra(PW pw) {
-		
+
 	}
 
 	@Override

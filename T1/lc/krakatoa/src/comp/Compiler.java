@@ -909,7 +909,6 @@ public class Compiler {
 			lexer.nextToken();
 			Expr right = simpleExpr();
 			
-			// Ainda precisa arrumar classes pra isso funcionar
 			if(left.getType() != right.getType() && (op == Symbol.NEQ || op == Symbol.EQ))
 				signalError.showError("Incompatible types cannot be compared");
 			
@@ -1048,7 +1047,7 @@ public class Compiler {
 			/*
 			 * return an object representing the creation of an object
 			 */
-			return null;
+			return new NewObjectExpr(aClass);
 			/*
           	 * PrimaryExpr ::= "super" "." Id "(" [ ExpressionList ] ")"  |
           	 *                 Id  |
@@ -1310,9 +1309,7 @@ public class Compiler {
 	}
 
 	private LiteralInt literalInt() {
-
-		LiteralInt e = null;
-
+		
 		// the number value is stored in lexer.getToken().value as an object of
 		// Integer.
 		// Method intValue returns that value as an value of type int.

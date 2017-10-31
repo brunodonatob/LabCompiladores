@@ -114,7 +114,7 @@ public class Compiler {
         	if(k.getName().equals("Program")) {
         		programExists = true;
         		
-        		MethodDec method = k.searchPublicMethod("run");
+        		MethodDec method = k.searchMethod("run");
         		// Verifica se existe metodo 'run' na classe Program
         		if(method == null) {
         			signalError.showError("There must be a public method called 'run' in class Program");
@@ -495,8 +495,7 @@ public class Compiler {
 			ifStatement();
 			break;
 		case BREAK:
-			breakStatement();
-			break;
+			return breakStatement();
 		case WHILE:
 			return whileStatement();
 		case SEMICOLON:
@@ -710,11 +709,14 @@ public class Compiler {
 		lexer.nextToken();
 	}
 
-	private void breakStatement() {
+	// "break" ";"
+	private BreakStatement breakStatement() {
 		lexer.nextToken();
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
 		lexer.nextToken();
+		
+		return new BreakStatement();
 	}
 
 	private void nullStatement() {

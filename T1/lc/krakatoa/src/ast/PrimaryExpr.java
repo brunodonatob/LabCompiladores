@@ -95,7 +95,6 @@ public class PrimaryExpr extends Expr {
 			var2.genKra(pw);
 		}
 		
-		// ?????
 		if(method!= null) {
 			pw.print(".");
 			method.genKra(pw);

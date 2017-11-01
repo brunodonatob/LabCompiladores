@@ -33,6 +33,14 @@ public class MethodDec {
 	public ParamList getParamList() {
 		return this.paramList;
 	}
+	
+	public void setReturnStatement() {
+		this.hasReturnStatement = true;
+	}
+	
+	public boolean hasReturnStatement() {
+		return this.hasReturnStatement;
+	}
 
 	public MethodDec(String name, Type returnType, Symbol qualifier) {
 		this.name = name;
@@ -40,6 +48,7 @@ public class MethodDec {
 		this.qualifier = qualifier;
 		this.statementList = new ArrayList<>();
 		this.paramList = new ParamList();
+		this.hasReturnStatement = false;
 	}
 	
 	public void genKra(PW pw) {
@@ -68,6 +77,7 @@ public class MethodDec {
 	private Type returnType;
 	private Symbol qualifier;
 	private ParamList paramList;
+	private boolean hasReturnStatement;
 	private ArrayList<Statement> statementList;
 
 }

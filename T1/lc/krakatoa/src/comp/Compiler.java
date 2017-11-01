@@ -421,6 +421,9 @@ public class Compiler {
 		for(Statement stmt : statementList) {
 			this.currentMethod.addStatement(stmt);
 		}
+		
+		if(!this.currentMethod.hasReturnStatement() && this.currentMethod.getReturnType() != Type.voidType)
+			this.signalError.showError("Missing 'return' statement in method '"+ name +"'");
 
 		if ( lexer.token != Symbol.RIGHTCURBRACKET ) signalError.showError("} expected");
 
@@ -694,7 +697,12 @@ public class Compiler {
 				else
 					lexer.nextToken();
 			}
-
+			else {
+				if(sendMessage && exprLeft.getType() != Type.voidType)
+					this.signalError.showError("Message send returns a value that is not used");
+			}
+			
+			sendMessage = false;
 			
 			return new AssignExpr(exprLeft, exprRight);
 		}
@@ -804,6 +812,8 @@ public class Compiler {
 		if(!e.getType().isCompatible(this.currentMethod.getReturnType())) {
 			this.signalError.showError("This expression is not compatible with the method return type");			
 		}
+		
+		this.currentMethod.setReturnStatement();
 		
 		return new ReturnStatement(e);
 	}
@@ -1195,6 +1205,7 @@ public class Compiler {
           	 *                 "this" "." Id "." Id "(" [ ExpressionList ] ")"
 			 */
 		case SUPER:
+			sendMessage = true;
 			// "super" "." Id "(" [ ExpressionList ] ")"
 			lexer.nextToken();
 			if ( lexer.token != Symbol.DOT ) {
@@ -1218,7 +1229,7 @@ public class Compiler {
 			}
 			
 			do {
-				aSuperMethod = superClass.searchMethod(messageName);
+				aSuperMethod = superClass.searchPublicMethod(messageName);
 				if(aSuperMethod != null)
 					break;
 				
@@ -1311,7 +1322,7 @@ public class Compiler {
 					}
 					else if ( lexer.token == Symbol.LEFTPAR ) {
 						// Id "." Id "(" [ ExpressionList ] ")"
-						
+						sendMessage = true;
 						Variable avar = this.symbolTable.getInLocal(firstId);
 						if(avar == null) {
 							this.signalError.showError("Variable '" + firstId + "' was not declared");
@@ -1398,7 +1409,7 @@ public class Compiler {
 					 * Confira se a classe corrente possui um m�todo cujo nome �
 					 * 'ident' e que pode tomar os par�metros de ExpressionList
 					 */
-					
+					sendMessage = true;
 					MethodDec amethod = currentClass.searchPublicMethod(id);
 					
 					if(amethod == null)
@@ -1449,6 +1460,7 @@ public class Compiler {
 				}
 				else if ( lexer.token == Symbol.DOT ) {
 					// "this" "." Id "." Id "(" [ ExpressionList ] ")"
+					sendMessage = true;
 					lexer.nextToken();
 					if ( lexer.token != Symbol.IDENT )
 						signalError.showError("Identifier expected");
@@ -1535,5 +1547,6 @@ public class Compiler {
 	private MethodDec 		currentMethod;
 	private KraClass 		currentClass;
 	private Stack<Integer>	isInLoop = new Stack<>();
+	private boolean			sendMessage = false;
 
 }

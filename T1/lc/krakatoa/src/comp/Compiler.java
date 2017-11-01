@@ -1104,7 +1104,7 @@ public class Compiler {
 			lexer.nextToken();
 			return new SignalExpr(op, factor());
 		}
-		else
+		else 
 			return factor();
 	}
 

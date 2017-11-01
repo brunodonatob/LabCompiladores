@@ -4,6 +4,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /** This class represents a metaobject call as <code>{@literal @}ce(...)</code> in <br>
  * <code>
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * end <br>
  * </code>
  * 
-   @author José
+   @author Josï¿½
    
  */
 public class MetaobjectCall {
@@ -28,6 +29,39 @@ public class MetaobjectCall {
 	}
 	public String getName() {
 		return name;
+	}
+	
+	public void genKra(PW pw) {
+		pw.print("@"+ name);
+		
+		if(!paramList.isEmpty()) {
+			pw.print("(");
+			
+			Iterator<Object> obj = this.paramList.iterator();
+			Object o = obj.next();
+			
+			if(o instanceof Integer) {
+				pw.print(o.toString());
+			}
+			else {
+				pw.print("\""+o.toString()+"\"");
+			}
+			
+			while(obj.hasNext()) {
+				pw.print(", ");
+				o = obj.next();
+				if(o instanceof Integer) {
+					pw.print(o.toString());
+				}
+				else {
+					pw.print("\""+o.toString()+"\"");
+				}
+			}
+			
+			pw.print(")");
+		}
+		
+		pw.println("\n");
 	}
 
 

@@ -100,6 +100,40 @@ public class Compiler {
             if ( lexer.token != Symbol.EOF ) {
                 signalError.showError("End of file expected");
             }
+            
+            
+            // Verifica se existe a classe Program
+            Boolean programExists = false;
+            for(KraClass k: kraClassList) {
+            	if(k.getName().equals("Program")) {
+            		programExists = true;
+            		
+            		MethodDec method = k.searchMethod("run");
+            		// Verifica se existe metodo 'run' na classe Program
+            		if(method == null) {
+            			signalError.showError("There must be a public method called 'run' in class Program");
+            		}
+            		
+            		// Verifica se o metodo run nao tem parametros
+            		if(method.getNumberOfParameters() != 0) {
+            			signalError.showError("Run method must be parameterless");
+            		}
+            		
+            		// Verifica se o metodo run eh public
+            		if(method.getQualifier() != Symbol.PUBLIC) {
+            			signalError.showError("Run method must be public");
+            		}
+            		
+            		// Verifica se o metodo run retorna void
+            		if(method.getReturnType() != Type.voidType) {
+            			signalError.showError("Run method must return void");
+            		}
+            	}
+            }
+            if(programExists == false) {
+            	signalError.showError("There must be a class called 'Program'");
+            }
+            
         }
         catch( CompilerError e) {
             // if there was an exception, there is a compilation signalError
@@ -108,37 +142,7 @@ public class Compiler {
             e.printStackTrace();
         }
         
-        // Verifica se existe a classe Program
-        Boolean programExists = false;
-        for(KraClass k: kraClassList) {
-        	if(k.getName().equals("Program")) {
-        		programExists = true;
-        		
-        		MethodDec method = k.searchMethod("run");
-        		// Verifica se existe metodo 'run' na classe Program
-        		if(method == null) {
-        			signalError.showError("There must be a public method called 'run' in class Program");
-        		}
-        		
-        		// Verifica se o metodo run nao tem parametros
-        		if(method.getNumberOfParameters() != 0) {
-        			signalError.showError("Run method must be parameterless");
-        		}
-        		
-        		// Verifica se o metodo run eh public
-        		if(method.getQualifier() != Symbol.PUBLIC) {
-        			signalError.showError("Run method must be public");
-        		}
-        		
-        		// Verifica se o metodo run retorna void
-        		if(method.getReturnType() != Type.voidType) {
-        			signalError.showError("Run method must return void");
-        		}
-        	}
-        }
-        if(programExists == false) {
-        	signalError.showError("There must be a class called 'Program'");
-        }
+       
         
         return program;
     }

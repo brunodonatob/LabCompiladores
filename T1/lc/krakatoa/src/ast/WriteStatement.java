@@ -14,7 +14,9 @@ public class WriteStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent("write ( ");
+		exprList.genKra(pw);
+		pw.print(" );");
 		
 	}
 

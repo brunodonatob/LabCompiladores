@@ -91,10 +91,12 @@ public class Compiler {
         
         Program program = new Program(kraClassList, metaobjectCallList, compilationErrorList);
         try {
-            while ( lexer.token == Symbol.MOCall ) {
+            
+        	while ( lexer.token == Symbol.MOCall ) {
                 metaobjectCallList.add(metaobjectCall());
             }
             kraClassList.add(classDec());
+            
             while ( lexer.token == Symbol.CLASS )
             	kraClassList.add(classDec());
             if ( lexer.token != Symbol.EOF ) {
@@ -107,27 +109,6 @@ public class Compiler {
             for(KraClass k: kraClassList) {
             	if(k.getName().equals("Program")) {
             		programExists = true;
-            		
-            		MethodDec method = k.searchMethod("run");
-            		// Verifica se existe metodo 'run' na classe Program
-            		if(method == null) {
-            			signalError.showError("There must be a public method called 'run' in class Program");
-            		}
-            		
-            		// Verifica se o metodo run nao tem parametros
-            		if(method.getNumberOfParameters() != 0) {
-            			signalError.showError("Run method must be parameterless");
-            		}
-            		
-            		// Verifica se o metodo run eh public
-            		if(method.getQualifier() != Symbol.PUBLIC) {
-            			signalError.showError("Run method must be public");
-            		}
-            		
-            		// Verifica se o metodo run retorna void
-            		if(method.getReturnType() != Type.voidType) {
-            			signalError.showError("Run method must return void");
-            		}
             	}
             }
             if(programExists == false) {
@@ -309,6 +290,13 @@ public class Compiler {
 			signalError.showError("public/private or \"}\" expected");
 		lexer.nextToken();
 		
+		
+		MethodDec method = currentClass.searchMethod("run");
+		// Verifica se existe metodo 'run' na classe Program
+		if(method == null && this.currentClass.getName().equals("Program")) {
+			signalError.showError("There must be a public method called 'run' in class Program", true);
+		}
+		
 		return currentClass;
 
 	}
@@ -352,7 +340,23 @@ public class Compiler {
 		ArrayList<Statement> statementList;
 		
 		this.currentMethod = new MethodDec(name, type, qualifier);
-		
+
+		if(this.currentClass.getName().equals("Program") && name.equals("run")) {
+			// Verifica se o metodo run nao tem parametros
+			if(this.currentMethod.getNumberOfParameters() != 0) {
+				signalError.showError("Run method must be parameterless");
+			}
+			
+			// Verifica se o metodo run eh public
+			if(qualifier != Symbol.PUBLIC) {
+				signalError.showError("Run method must be public");
+			}
+			
+			// Verifica se o metodo run retorna void
+			if(type != Type.voidType) {
+				signalError.showError("Run method must return void");
+			}
+		}
 		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.RIGHTPAR ) 
@@ -360,6 +364,13 @@ public class Compiler {
 		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 
+		if(this.currentClass.getName().equals("Program") && name.equals("run")) {
+			// Verifica se o metodo run nao tem parametros
+			if(this.currentMethod.getNumberOfParameters() != 0) {
+				signalError.showError("Run method must be parameterless", true);
+			}
+		}
+		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTCURBRACKET ) signalError.showError("{ expected");
 
@@ -991,8 +1002,6 @@ public class Compiler {
 			
 			Type l = left.getType();
 			Type r = right.getType();
-			
-			System.out.println("L: "+l+" R:"+r);
 			
 			if(!r.isClassType()) {
 				if(l!= Type.undefinedType) {

@@ -86,7 +86,21 @@ public class PrimaryExpr extends Expr {
 	
 	@Override
 	public void genKra(PW pw,boolean putParenthesis) {
-
+		if(str!= null)
+			pw.printIdent(str+".");
+		
+		id.genKra(pw);
+		if(var2 != null) {
+			pw.print(".");
+			var2.genKra(pw);
+		}
+		
+		// ?????
+		if(method!= null) {
+			pw.print(".");
+			method.genKra(pw);
+		}
+			
 	}
 
 	@Override

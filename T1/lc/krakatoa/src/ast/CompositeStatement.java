@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class CompositeStatement extends Statement {
 
@@ -16,8 +17,17 @@ public class CompositeStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		Iterator<Statement> sList = statementList.iterator();
+
+		pw.printIdent("{ ");
+		Statement s = sList.next();
+		s.genKra(pw);
 		
+		while(sList.hasNext()) {
+			s = sList.next();
+			s.genKra(pw);
+		}
+		pw.print(" }");
 	}
 
 	private ArrayList<Statement> statementList;

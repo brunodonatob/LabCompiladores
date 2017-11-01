@@ -666,6 +666,10 @@ public class Compiler {
 				
 				exprRight = expr();
 				
+				if((exprLeft.getType() == Type.intType || exprLeft.getType() == Type.booleanType)
+						&& exprRight.getType() == Type.undefinedType)
+					signalError.showError("'null' cannot be assigned to a variable of a basic type");
+				
 				if(exprRight.getType() == Type.voidType)
 					signalError.showError("Void cannot be assigned");
 				
@@ -685,6 +689,7 @@ public class Compiler {
 				else
 					lexer.nextToken();
 			}
+
 			
 			return new AssignExpr(exprLeft, exprRight);
 		}
@@ -893,6 +898,9 @@ public class Compiler {
 		
 		ExprList exprList = exprList();
 		
+		if(exprList.hasObjects())
+			signalError.showError("Command 'write' does not accept objects");
+		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
 		if ( lexer.token != Symbol.SEMICOLON )
@@ -924,6 +932,9 @@ public class Compiler {
 		lexer.nextToken();
 		
 		ExprList exprList = exprList();
+		
+		if(exprList.hasObjects())
+			signalError.showError("Command 'write' does not accept objects");
 		
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
@@ -1406,9 +1417,30 @@ public class Compiler {
 								currentClass.getName() +"'");								
 					}
 					
-					exprList = this.realParameters();
+					exprList = this.realParameters(); 
 					
-					return new PrimaryExpr("this",amethod,exprList);
+					if(exprList == null) {
+						if(amethod.getParamList().getSize() != 0) {
+							this.signalError.showError("Inconpatible number of parameters");
+						}
+					}
+					else if(exprList.getSize() == amethod.getParamList().getSize()) {
+						Iterator<Parameter> pList = amethod.getParamList().elements();
+						Iterator<Expr> eList = exprList.elements();
+						
+						while(pList.hasNext() && eList.hasNext()) {
+							Parameter p = pList.next();
+							Expr e = eList.next();
+							
+							if(!e.getType().isCompatible(p.getType()))
+								this.signalError.showError("Type error: the type of the real parameter is not subclass of the type of the formal parameter");
+							
+						}
+					}
+					else
+						this.signalError.showError("Inconpatible number of parameters");
+						
+					return new PrimaryExpr("this", amethod, exprList);
 				}
 				else if ( lexer.token == Symbol.DOT ) {
 					// "this" "." Id "." Id "(" [ ExpressionList ] ")"

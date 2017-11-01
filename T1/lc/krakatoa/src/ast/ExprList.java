@@ -24,6 +24,18 @@ public class ExprList {
 		return false;
 	}
 	
+	public boolean hasObjects() {
+		for(Expr e : exprList) {
+			if(e.getType().isClassType())
+				return true;
+		}
+		return false;
+	}
+	
+	public Iterator<Expr> elements() {
+		return this.exprList.iterator();
+	}
+	
 	public void genKra(PW pw) {
 		 int size = exprList.size();
 	        for ( Expr e : exprList ) {

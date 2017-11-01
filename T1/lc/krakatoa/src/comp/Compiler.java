@@ -658,15 +658,13 @@ public class Compiler {
 					signalError.showError("Void cannot be assigned");
 				
 				if(exprLeft.getType().isClassType() && exprRight.getType().isClassType()) {
-					System.out.println("Tipo left: "+exprLeft.getType()+ " Tipo right: " +exprRight.getType());
 					if(!exprRight.getType().isCompatible(exprLeft.getType()))
 						signalError.showError("Erro de classes nao compativeis");
 				}
-				
-				if(!exprRight.getType().isCompatible(exprLeft.getType())) {
+				else if(!exprRight.getType().isCompatible(exprLeft.getType())) {
 					if(!exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType)
 						signalError.showError("Erro de classe de tipo undefined");
-					else
+					else if (!(exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType))
 						signalError.showError("Erro de tipos diferentes");
 				}
 				
@@ -988,19 +986,33 @@ public class Compiler {
 			Type l = left.getType();
 			Type r = right.getType();
 			
-			if(l != r)
+			System.out.println("L: "+l+" R:"+r);
+			
+			if(!r.isClassType()) {
+				if(l!= Type.undefinedType) {
+					if(!r.isCompatible(l))
+						signalError.showError("Incompatible types cannot be compared");}					
+						
+			}
+			else if (l != Type.undefinedType) {
+				if(!r.isCompatible(l) && !l.isCompatible(r))
+					signalError.showError("Incompatible types cannot be compared");
+			}
+			
+			
+			/* if(l != r)
 				if(l == Type.booleanType || l == Type.intType || l == Type.stringType)
 					if(r == Type.booleanType || r == Type.intType ||  r == Type.stringType)
 						if(!(l == Type.stringType && r == Type.undefinedType))
 							signalError.showError("Incompatible types cannot be compared");
 			
-			if(!l.isCompatible(r) && op == Symbol.NEQ)
+			if(!r.isCompatible(l) && op == Symbol.NEQ)
 				if(!(l == Type.stringType && r == Type.undefinedType))
 					if(!l.isClassType() && r == Type.undefinedType)
 						signalError.showError("Incompatible types cannot be compared");
 			
-			if(!l.isCompatible(r) && (op == Symbol.NEQ ||op == Symbol.EQ))
-				signalError.showError("Incompatible types cannot be compared");
+			if(!r.isCompatible(l) && (op == Symbol.NEQ ||op == Symbol.EQ))
+				signalError.showError("Incompatible types cannot be compared"); */
 				
 			left = new CompositeExpr(left, op, right);
 		}

@@ -39,6 +39,9 @@ abstract public class Type {
 		else if(this == voidType) {
 			return false;
 		}
+		else if (this == undefinedType) {
+			return true;
+		}
 		else if(this instanceof KraClass) {
 			return ((this == other) || ((KraClass) this ).isSubclassOf(other));
 		}

@@ -97,7 +97,10 @@ public class PrimaryExpr extends Expr {
 		
 		if(method!= null) {
 			pw.print(".");
-			method.genKra(pw);
+			pw.print(method.getName());
+			pw.print("( ");
+			exprs.genKra(pw);
+			pw.print(" )");
 		}
 			
 	}

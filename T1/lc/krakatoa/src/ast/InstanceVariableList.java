@@ -21,7 +21,11 @@ public class InstanceVariableList {
     }
     
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		for(InstanceVariable instVar : instanceVariableList) {
+			instVar.genKra(pw);
+		}
+		
+		pw.println("");
 		
 	}
 

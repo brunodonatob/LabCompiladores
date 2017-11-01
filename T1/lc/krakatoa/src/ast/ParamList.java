@@ -20,6 +20,21 @@ public class ParamList {
         return paramList.size();
     }
     
+    public boolean compareParameters(ParamList otherList) {
+    	Iterator<Parameter> thisParameters = this.elements();
+    	Iterator<Parameter> otherParameters = otherList.elements();
+    	
+    	while(thisParameters.hasNext() && otherParameters.hasNext()) {
+    		Type thisParamType = thisParameters.next().getType();
+    		Type otherParamType = otherParameters.next().getType();
+    		
+    		if(thisParamType != otherParamType)
+    			return false;
+    	}
+    	
+    	return true;
+    }
+    
 	public void genKra(PW pw) {
 		Iterator<Parameter> pList = this.elements();
 		

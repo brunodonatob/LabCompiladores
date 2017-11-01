@@ -117,6 +117,7 @@ public class KraClass extends Type {
 	   }
 	   
 	   pw.println(" {");
+	   pw.println("");
 	   pw.add();
 	   
 	   // Imprime as variaveis de instancia
@@ -125,15 +126,18 @@ public class KraClass extends Type {
 	   // Imprime os metodos privados
 	   for(MethodDec pvMethod : this.privateMethodList) {
 		   pvMethod.genKra(pw);
+		   pw.println("");
 	   }
 	   
 	   // Imprime os metodos publicos
 	   for(MethodDec pbMethod : this.publicMethodList) {
 		   pbMethod.genKra(pw);
+		   pw.println("");
 	   }
 	   
 	   pw.sub();
 	   pw.println("}");
+	   pw.println("");
    }
    
    private String name;

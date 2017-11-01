@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class LocalDec extends Statement {
 
@@ -17,7 +18,21 @@ public class LocalDec extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent(type.getName());
+		
+		Iterator<String> iList = idList.iterator();
+		
+		if(iList.hasNext()) {
+			String id = iList.next();
+			pw.print(" "+ id);
+			
+			while(iList.hasNext()) {
+				id = iList.next();
+				pw.print(", "+ id);
+			}
+			
+			pw.println(";");
+		}
 
 	}
 

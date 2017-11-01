@@ -65,7 +65,25 @@ public class Lexer {
 
 	}
 
+	public Symbol nextSymbol() {
+		
+		char ch;
+		int fakeTokenPos = tokenPos;
+		
+		while (  (ch = input[fakeTokenPos]) == ' ' || ch == '\r' ||
+                ch == '\t' || ch == '\n')  {
 
+         fakeTokenPos++;
+		}
+		if ( ch == '\0')
+	        return Symbol.EOF;
+		if ( ch == '=')
+			return Symbol.ASSIGN;
+		if ( ch == '.')
+			return Symbol.DOT;
+		
+		return token;
+	}
 
 
     public void nextToken() {

@@ -151,7 +151,10 @@ public class Compiler {
      * end <br>
      * </code>
      *
-
+     *
+     * MOCall := “@” Id [ “(” { MOParam } “)” ]
+     * MOParam := IntValue | StringValue | Id
+     *
 	 */
 	@SuppressWarnings("incomplete-switch")
 	private MetaobjectCall metaobjectCall() {
@@ -248,11 +251,15 @@ public class Compiler {
 				signalError.showError("A class cannot inherit from itself");
 			}
 			
+			KraClass superClass = symbolTable.getInGlobal(superclassName);
+			
 			// Verifica se a superclasse existe
-			if(symbolTable.getInGlobal(superclassName) == null) {
+			if(superClass == null) {
 				signalError.showError("Superclass '"+ className +"' must be declared before");
 			}
 
+			this.currentClass.setSuperclass(superClass);
+			
 			lexer.nextToken();
 		}
 		
@@ -349,6 +356,43 @@ public class Compiler {
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTCURBRACKET ) signalError.showError("{ expected");
 
+		this.currentClass.addMethod(this.currentMethod);
+		
+		KraClass superClass = this.currentClass.getSuperclass();
+		
+		if(superClass != null) {
+			MethodDec amethod = superClass.searchMethod(name);
+			
+			if(amethod == null) {
+				superClass = superClass.getSuperclass();
+				
+				while(superClass != null) {
+					amethod = superClass.searchPublicMethod(name);
+					
+					if(amethod != null)
+						break;
+					else
+						superClass = superClass.getSuperclass();
+				}
+			}
+	
+			// Verifica se retorno e parametros sao iguais
+			if(amethod != null) {
+				if(this.currentMethod.getReturnType() != amethod.getReturnType())
+					signalError.showError("Redefined method must have the same signature");
+				
+				if(this.currentMethod.getNumberOfParameters() != amethod.getNumberOfParameters())
+					signalError.showError("Redefined method must have the same signature");
+				
+				if(!this.currentMethod.getParamList().compareParameters(amethod.getParamList()))
+					signalError.showError("Redefined method must have the same signature");
+			}
+		}
+		
+		// Verifica se metodo esta sendo redeclarado
+		//if(this.currentClass.searchMethod(name) != null)
+			//signalError.showError("Method '"+ name +"' cannot be redeclared");
+
 		lexer.nextToken();
 		statementList = statementList();
 		
@@ -359,8 +403,6 @@ public class Compiler {
 		if ( lexer.token != Symbol.RIGHTCURBRACKET ) signalError.showError("} expected");
 
 		lexer.nextToken();
-		
-		this.currentClass.addMethod(this.currentMethod);
 		
 		this.currentMethod = null;
 		
@@ -581,7 +623,8 @@ public class Compiler {
 	private Statement assignExprLocalDec() {
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
 				|| lexer.token == Symbol.STRING ||
-				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue())) ) {
+				(lexer.token == Symbol.IDENT && isType(lexer.getStringValue()) && 
+				lexer.nextSymbol() != Symbol.ASSIGN && lexer.nextSymbol() != Symbol.DOT) ) {
 			/*
 			 * uma declaracao de variavel. 'lexer.token' eh o tipo da variavel
 			 *
@@ -603,9 +646,17 @@ public class Compiler {
 				
 				exprRight = expr();
 				
-				if(exprLeft.getType().isCompatible(exprRight.getType())) {
-					signalError.showError("Wrong type error");
-				} 
+				if(exprRight.getType() == Type.voidType)
+					signalError.showError("Void cannot be assigned");
+				
+				if(exprLeft.getType().isClassType() && exprRight.getType().isClassType()) {
+					if(!exprLeft.getType().isCompatible(exprRight.getType()))
+						signalError.showError("Wrong type error");
+				}
+				
+				if(!exprLeft.getType().isCompatible(exprRight.getType()))
+					if(!exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType)
+						signalError.showError("Wrong type error");
 				
 				if ( lexer.token != Symbol.SEMICOLON )
 					signalError.showError("';' expected", true);
@@ -641,11 +692,11 @@ public class Compiler {
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
 		
-		this.isInLoop = true;
+		this.isInLoop.push(1);
 		
 		Statement s = statement();
 		
-		this.isInLoop = false;
+		this.isInLoop.pop();
 		
 		return new WhileStatement(e, s);
 	}
@@ -655,11 +706,11 @@ public class Compiler {
 				
 		lexer.nextToken();
 		
-		this.isInLoop = true;
+		this.isInLoop.push(1);
 		
 		CompositeStatement compStatement = compositeStatement();
 		
-		this.isInLoop = false;
+		this.isInLoop.pop();
 		
 		if(lexer.token != Symbol.WHILE)
 			signalError.showError("'while' expected");
@@ -872,7 +923,7 @@ public class Compiler {
 	// "break" ";"
 	private BreakStatement breakStatement() {
 		
-		if(this.isInLoop == false) {
+		if(this.isInLoop.isEmpty()) {
 			signalError.showError("'break' statement found outside a 'while' statement");
 		}
 		
@@ -922,9 +973,23 @@ public class Compiler {
 					|| op == Symbol.GT) && left.getType() != Type.intType)
 				signalError.showError("Comparison operators can only be applied to int values");
 			
-			if(!left.getType().isCompatible(right.getType()))
-				signalError.showError("Incompatible types cannot be compared");
+			Type l = left.getType();
+			Type r = right.getType();
 			
+			if(l != r)
+				if(l == Type.booleanType || l == Type.intType || l == Type.stringType)
+					if(r == Type.booleanType || r == Type.intType ||  r == Type.stringType)
+						if(!(l == Type.stringType && r == Type.undefinedType))
+							signalError.showError("Incompatible types cannot be compared");
+			
+			if(!l.isCompatible(r) && op == Symbol.NEQ)
+				if(!(l == Type.stringType && r == Type.undefinedType))
+					if(!l.isClassType() && r == Type.undefinedType)
+						signalError.showError("Incompatible types cannot be compared");
+			
+			if(!l.isCompatible(r) && (op == Symbol.NEQ ||op == Symbol.EQ))
+				signalError.showError("Incompatible types cannot be compared");
+				
 			left = new CompositeExpr(left, op, right);
 		}
 		
@@ -1004,6 +1069,7 @@ public class Compiler {
 		Expr anExpr;
 		ExprList exprList;
 		String messageName, id;
+		KraClass superClass;
 
 		switch (lexer.token) {
 		// IntValue
@@ -1094,7 +1160,7 @@ public class Compiler {
 			 * na superclasse/superclasse da superclasse etc
 			 */
 
-			KraClass superClass = this.currentClass.getSuperclass();
+			superClass = this.currentClass.getSuperclass();
 			MethodDec aSuperMethod = null;
 			
 			if(superClass == null) {
@@ -1208,6 +1274,20 @@ public class Compiler {
 						KraClass classVar = (KraClass ) typeVar;
 						// method is id
 						MethodDec amethod = classVar.searchPublicMethod(id);
+						
+						if(amethod == null) {
+							superClass = classVar.getSuperclass();
+							
+							while(superClass != null) {
+								amethod = superClass.searchPublicMethod(id);
+								
+								if(amethod != null)
+									break;
+								else
+									superClass = superClass.getSuperclass();
+							}
+						}
+						
 						if(amethod == null) {
 							this.signalError.showError("Method '" + id + "' is not a public method of '" + 
 									classVar.getName() + "' which is the type of '" + firstId + "'");								
@@ -1215,7 +1295,7 @@ public class Compiler {
 						
 						exprList = this.realParameters();
 						
-						return new PrimaryExpr(avar,amethod,exprList);
+						return new PrimaryExpr(avar, amethod, exprList);
 					}
 					else {
 						// retorne o objeto da ASA que representa Id "." Id
@@ -1270,6 +1350,23 @@ public class Compiler {
 					 */
 					
 					MethodDec amethod = currentClass.searchPublicMethod(id);
+					
+					if(amethod == null)
+						amethod = currentClass.searchPrivateMethod(id);
+					
+					if(amethod == null) {
+						superClass = this.currentClass.getSuperclass();
+						
+						while(superClass != null) {
+							amethod = superClass.searchPublicMethod(id);
+							
+							if(amethod != null)
+								break;
+							else
+								superClass = superClass.getSuperclass();
+						}
+					}
+					
 					if(amethod == null) {
 						this.signalError.showError("Method '" + id + "' is not a public method of '" + 
 								currentClass.getName() +"'");								
@@ -1285,24 +1382,37 @@ public class Compiler {
 					if ( lexer.token != Symbol.IDENT )
 						signalError.showError("Identifier expected");
 					
-					InstanceVariable var = currentClass.searchInstanceVariable(id);
+					InstanceVariable thisClass = currentClass.searchInstanceVariable(id);
 					
-					if(var == null) {
+					if(thisClass == null) {
 						this.signalError.showError("Variable '" + id + "' does not exist in the current class");								
 					}
 					
-					Variable v = this.symbolTable.getInLocal(id);
+					Variable thisId = this.currentClass.searchInstanceVariable(id);
+					KraClass instanceVar = (KraClass ) thisId.getType();
 
 					lexer.nextToken();
 					
-					MethodDec amethod = currentClass.searchPublicMethod(lexer.getStringValue());
+					MethodDec amethod = instanceVar.searchPublicMethod(lexer.getStringValue());
+					if(amethod == null) {
+						superClass = this.currentClass.getSuperclass();
+						
+						while(superClass != null) {
+							amethod = superClass.searchPublicMethod(id);
+							
+							if(amethod != null)
+								break;
+							else
+								superClass = superClass.getSuperclass();
+						}
+					}
 					if(amethod == null) {
 						this.signalError.showError("Method '" + lexer.getStringValue() + "' is not a public method of '" + 
 								currentClass.getName() +"'");								
 					}
 					exprList = this.realParameters();
 					
-					return new PrimaryExpr("this",v,amethod,exprList);
+					return new PrimaryExpr("this", thisId, amethod, exprList);
 				}
 				else {
 					// retorne o objeto da ASA que representa "this" "." Id
@@ -1353,6 +1463,6 @@ public class Compiler {
 	private ErrorSignaller	signalError;
 	private MethodDec 		currentMethod;
 	private KraClass 		currentClass;
-	private boolean			isInLoop = false;
+	private Stack<Integer>	isInLoop = new Stack<>();
 
 }

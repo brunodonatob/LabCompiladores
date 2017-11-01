@@ -17,6 +17,13 @@ abstract public class Type {
     }
 
     abstract public String getCname();
+    
+    public boolean isClassType() {
+    	if(this instanceof KraClass)
+    		return true;
+    	else
+    		return false;
+    }
 
 	public boolean isCompatible(Type other) {
 		

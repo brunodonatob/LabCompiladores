@@ -9,7 +9,7 @@ public class Parameter extends Variable {
     
     @Override
     public void genKra(PW pw) {
-    	pw.print(super.getType().toString());
+    	pw.print(super.getType().getName());
     	pw.print(" ");
     	pw.print(super.getName());
     }

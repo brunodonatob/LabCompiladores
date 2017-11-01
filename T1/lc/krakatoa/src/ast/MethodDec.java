@@ -29,6 +29,10 @@ public class MethodDec {
 	public int getNumberOfParameters() {
 		return paramList.getSize();
 	}
+	
+	public ParamList getParamList() {
+		return this.paramList;
+	}
 
 	public MethodDec(String name, Type returnType, Symbol qualifier) {
 		this.name = name;
@@ -41,7 +45,7 @@ public class MethodDec {
 	public void genKra(PW pw) {
 		pw.printIdent(qualifier.toString());
 		pw.print(" "+ returnType.getName() +" ");
-		pw.print(name +" (");
+		pw.print(name +"(");
 		this.paramList.genKra(pw);
 		pw.println(") {");
 		pw.add();

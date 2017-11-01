@@ -8,7 +8,7 @@ public class InstanceVariable extends Variable {
     
     @Override
     public void genKra(PW pw) {
-    	pw.printIdent("private "+ super.getType().toString() +" "+ super.getName()+";");
+    	pw.printIdent("private "+ super.getType().getName() +" "+ super.getName()+";");
     	pw.println("");
     }
 

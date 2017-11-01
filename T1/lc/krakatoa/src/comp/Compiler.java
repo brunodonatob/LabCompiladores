@@ -240,7 +240,7 @@ public class Compiler {
 			signalError.showError("A class with name '"+ className +"' was already declared");
 		}
 		
-		symbolTable.putInGlobal(className, currentClass);
+		
 		lexer.nextToken();
 		
 		// Extends
@@ -266,6 +266,8 @@ public class Compiler {
 			
 			lexer.nextToken();
 		}
+		
+		symbolTable.putInGlobal(className, currentClass);
 		
 		if ( lexer.token != Symbol.LEFTCURBRACKET )
 			signalError.showError("{ expected", true);
@@ -361,7 +363,7 @@ public class Compiler {
 		if ( lexer.token != Symbol.LEFTCURBRACKET ) signalError.showError("{ expected");
 
 		if(currentClass.searchMethod(name)!= null) 
-			signalError.showError("Method '"+ name +"' cannot be redeclared");
+			signalError.showError("Method '"+ name +"' is being redefined");
 		
 		this.currentClass.addMethod(this.currentMethod);
 		
@@ -657,11 +659,11 @@ public class Compiler {
 				
 				if(exprLeft.getType().isClassType() && exprRight.getType().isClassType()) {
 					System.out.println("Tipo left: "+exprLeft.getType()+ " Tipo right: " +exprRight.getType());
-					if(!exprLeft.getType().isCompatible(exprRight.getType()))
+					if(!exprRight.getType().isCompatible(exprLeft.getType()))
 						signalError.showError("Erro de classes nao compativeis");
 				}
 				
-				if(!exprLeft.getType().isCompatible(exprRight.getType())) {
+				if(!exprRight.getType().isCompatible(exprLeft.getType())) {
 					if(!exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType)
 						signalError.showError("Erro de classe de tipo undefined");
 					else

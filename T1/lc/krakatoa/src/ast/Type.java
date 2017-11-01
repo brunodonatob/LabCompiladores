@@ -40,7 +40,7 @@ abstract public class Type {
 			return false;
 		}
 		else if(this instanceof KraClass) {
-			return this == other || ((KraClass ) this ).isSubclassOf(other);
+			return ((this == other) || ((KraClass) this ).isSubclassOf(other));
 		}
 		else {
 			return false;	

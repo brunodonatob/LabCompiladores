@@ -340,7 +340,7 @@ public class Compiler {
 		ArrayList<Statement> statementList;
 		
 		this.currentMethod = new MethodDec(name, type, qualifier);
-		
+
 		if(this.currentClass.getName().equals("Program") && name.equals("run")) {
 			// Verifica se o metodo run nao tem parametros
 			if(this.currentMethod.getNumberOfParameters() != 0) {
@@ -376,6 +376,8 @@ public class Compiler {
 
 		if(currentClass.searchMethod(name)!= null) 
 			signalError.showError("Method '"+ name +"' is being redefined");
+		if(currentClass.searchInstanceVariable(name)!= null)
+			signalError.showError("Method '"+ name +"' has name equal to instance variable");
 		
 		this.currentClass.addMethod(this.currentMethod);
 		
@@ -672,6 +674,9 @@ public class Compiler {
 				
 				if(exprRight.getType() == Type.voidType)
 					signalError.showError("Void cannot be assigned");
+				
+				if (!exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType)
+					signalError.showError("Null cannot be assigned to basic variable");
 				
 				if(exprLeft.getType().isClassType() && exprRight.getType().isClassType()) {
 					if(!exprRight.getType().isCompatible(exprLeft.getType()))

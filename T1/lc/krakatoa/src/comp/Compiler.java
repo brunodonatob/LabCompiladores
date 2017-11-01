@@ -353,6 +353,7 @@ public class Compiler {
 		
 		this.currentMethod = new MethodDec(name, type, qualifier);
 		
+		
 		lexer.nextToken();
 		if ( lexer.token != Symbol.RIGHTPAR ) 
 			formalParamDec();
@@ -364,6 +365,8 @@ public class Compiler {
 
 		if(currentClass.searchMethod(name)!= null) 
 			signalError.showError("Method '"+ name +"' is being redefined");
+		if(currentClass.searchInstanceVariable(name)!= null)
+			signalError.showError("Method '"+ name +"' has name equal to instance variable");
 		
 		this.currentClass.addMethod(this.currentMethod);
 		
@@ -656,6 +659,9 @@ public class Compiler {
 				
 				if(exprRight.getType() == Type.voidType)
 					signalError.showError("Void cannot be assigned");
+				
+				if (!exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType)
+					signalError.showError("Null cannot be assigned to basic variable");
 				
 				if(exprLeft.getType().isClassType() && exprRight.getType().isClassType()) {
 					if(!exprRight.getType().isCompatible(exprLeft.getType()))

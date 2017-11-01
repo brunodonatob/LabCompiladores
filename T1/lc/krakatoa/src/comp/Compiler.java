@@ -360,6 +360,9 @@ public class Compiler {
 		lexer.nextToken();
 		if ( lexer.token != Symbol.LEFTCURBRACKET ) signalError.showError("{ expected");
 
+		if(currentClass.searchMethod(name)!= null) 
+			signalError.showError("Method '"+ name +"' cannot be redeclared");
+		
 		this.currentClass.addMethod(this.currentMethod);
 		
 		KraClass superClass = this.currentClass.getSuperclass();
@@ -378,6 +381,7 @@ public class Compiler {
 					else
 						superClass = superClass.getSuperclass();
 				}
+				
 			}
 	
 			// Verifica se retorno e parametros sao iguais
@@ -393,9 +397,7 @@ public class Compiler {
 			}
 		}
 		
-		// Verifica se metodo esta sendo redeclarado
-		//if(this.currentClass.searchMethod(name) != null)
-			//signalError.showError("Method '"+ name +"' cannot be redeclared");
+		
 
 		lexer.nextToken();
 		statementList = statementList();
@@ -654,13 +656,17 @@ public class Compiler {
 					signalError.showError("Void cannot be assigned");
 				
 				if(exprLeft.getType().isClassType() && exprRight.getType().isClassType()) {
+					System.out.println("Tipo left: "+exprLeft.getType()+ " Tipo right: " +exprRight.getType());
 					if(!exprLeft.getType().isCompatible(exprRight.getType()))
-						signalError.showError("Wrong type error");
+						signalError.showError("Erro de classes nao compativeis");
 				}
 				
-				if(!exprLeft.getType().isCompatible(exprRight.getType()))
+				if(!exprLeft.getType().isCompatible(exprRight.getType())) {
 					if(!exprLeft.getType().isClassType() && exprRight.getType() == Type.undefinedType)
-						signalError.showError("Wrong type error");
+						signalError.showError("Erro de classe de tipo undefined");
+					else
+						signalError.showError("Erro de tipos diferentes");
+				}
 				
 				if ( lexer.token != Symbol.SEMICOLON )
 					signalError.showError("';' expected", true);

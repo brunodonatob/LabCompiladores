@@ -44,7 +44,7 @@ public class ErrorSignaller {
       /* String msg = lineNumber + " : " + strMessage;
       out.println(msg);
       out.println(lineWithError); */
-      System.out.println( strMessage + " " + lineNumber );
+      //System.out.println( strMessage + " " + lineNumber );
       //System.out.println( lineWithError );
       out.flush();
       if ( out.checkError() )

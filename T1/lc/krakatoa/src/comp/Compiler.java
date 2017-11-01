@@ -799,19 +799,20 @@ public class Compiler {
 	// ReturnStat := “return” Expression
 	private ReturnStatement returnStatement() {
 
+		if( this.currentMethod.getReturnType() == Type.voidType ) {
+			this.signalError.showError("Illegal 'return' statement. Method returns 'void'");
+		}
+		
 		lexer.nextToken();
 		Expr e = expr();
+		
+		if(!e.getType().isCompatible(this.currentMethod.getReturnType())) {
+			this.signalError.showError("Type error: type of the expression returned is not subclass of the method return type");			
+		}
+		
 		if ( lexer.token != Symbol.SEMICOLON )
 			signalError.show(ErrorSignaller.semicolon_expected);
 		lexer.nextToken();
-		
-		if( this.currentMethod.getReturnType() == Type.voidType ) {
-			this.signalError.showError("This method cannot return a value");
-		}
-		
-		if(!e.getType().isCompatible(this.currentMethod.getReturnType())) {
-			this.signalError.showError("This expression is not compatible with the method return type");			
-		}
 		
 		this.currentMethod.setReturnStatement();
 		
@@ -913,6 +914,10 @@ public class Compiler {
 		
 		ExprList exprList = exprList();
 		
+		if(exprList.hasBoolean()) {
+			signalError.showError("Command 'write' does not accept 'boolean' expressions");
+		}
+		
 		if(exprList.hasObjects())
 			signalError.showError("Command 'write' does not accept objects");
 		
@@ -924,10 +929,6 @@ public class Compiler {
 		
 		if(exprList.getSize() < 1) {
 			signalError.showError("Write statement must have at least one parameter");
-		}
-		
-		if(exprList.hasBoolean()) {
-			signalError.showError("Boolean expressions cannot be parameters to write");
 		}
 		
 		return new WriteStatement(exprList);
@@ -948,6 +949,10 @@ public class Compiler {
 		
 		ExprList exprList = exprList();
 		
+		if(exprList.hasBoolean()) {
+			signalError.showError("Command 'write' does not accept 'boolean' expressions");
+		}
+		
 		if(exprList.hasObjects())
 			signalError.showError("Command 'write' does not accept objects");
 		
@@ -959,10 +964,6 @@ public class Compiler {
 		
 		if(exprList.getSize() < 1) {
 			signalError.showError("Write statement must have at least one parameter");
-		}
-		
-		if(exprList.hasBoolean()) {
-			signalError.showError("Boolean expressions cannot be parameters to write");
 		}
 		
 		return new WritelnStatement(exprList);

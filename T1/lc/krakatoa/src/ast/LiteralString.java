@@ -11,7 +11,7 @@ public class LiteralString extends Expr {
     }
     
     public void genKra(PW pw,boolean putParenthesis) {
-		
+        pw.print(literalString);
 	}
     
     public Type getType() {

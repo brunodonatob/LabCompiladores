@@ -25,7 +25,8 @@ public class InstanceVariableList {
 			instVar.genKra(pw);
 		}
 		
-		pw.println("");
+		if(!this.instanceVariableList.isEmpty())
+			pw.println("");
 		
 	}
 

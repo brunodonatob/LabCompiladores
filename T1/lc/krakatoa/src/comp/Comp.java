@@ -265,7 +265,11 @@ public class Comp {
         	   
               PW pw = new PW();
               pw.set(printWriter);
+              try {
               program.genKra( pw );
+              }catch ( RuntimeException e ) {
+                  e.printStackTrace();
+              }
               if ( printWriter.checkError() ) {
                  outError.println("There was an error in the output");
               }

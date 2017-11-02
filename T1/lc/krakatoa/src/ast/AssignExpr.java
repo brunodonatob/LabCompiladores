@@ -15,9 +15,12 @@ public class AssignExpr extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		exprLeft.genKra(pw,false);
-		pw.print(" = ");
-		exprRight.genKra(pw,false);
+		exprLeft.genKra(pw, false);
+		
+		if(this.exprRight != null) {
+			pw.print(" = ");
+			exprRight.genKra(pw, false);
+		}
 		//pw.print(";");
 	}
 

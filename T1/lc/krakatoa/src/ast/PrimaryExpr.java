@@ -85,20 +85,46 @@ public class PrimaryExpr extends Expr {
 	}
 	
 	@Override
-	public void genKra(PW pw,boolean putParenthesis) {
-		if(str!= null)
-			pw.printIdent(str+".");
+	public void genKra(PW pw, boolean putParenthesis) {
+//		if(str!= null)
+//			pw.printIdent(str+".");
+//		
+//		id.genKra(pw);
+//		if(var2 != null) {
+//			pw.print(".");
+//			var2.genKra(pw);
+//		}
+//		
+//		// ?????
+//		if(method!= null) {
+//			pw.print(".");
+//			method.genKra(pw);
+//		}
 		
-		id.genKra(pw);
-		if(var2 != null) {
-			pw.print(".");
-			var2.genKra(pw);
-		}
 		
-		// ?????
-		if(method!= null) {
+		
+		switch(primaryExprCase) {
+		case 1:
+			pw.print(this.id.getName());
+			break;
+		case 2:
+			
+			pw.print(this.id.getName() +"."+ this.var2.getName());
+			break;
+		case 3: // 3. Id "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.id.getName());
 			pw.print(".");
-			method.genKra(pw);
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genKra(pw);
+			pw.print(")");
+			break;
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
 		}
 			
 	}

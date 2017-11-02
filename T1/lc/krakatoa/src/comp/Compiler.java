@@ -561,9 +561,10 @@ public class Compiler {
 		Symbol tk;
 		// statements always begin with an identifier, if, read, write, ...
 		while ((tk = lexer.token) != Symbol.RIGHTCURBRACKET
-				&& tk != Symbol.ELSE)
-			statementList.add(statement());
-		
+				&& tk != Symbol.ELSE) {
+			Statement stmt = statement();
+			statementList.add(stmt);
+		}
 		return statementList;
 	}
 
@@ -698,12 +699,17 @@ public class Compiler {
 					lexer.nextToken();
 			}
 			else {
+				if ( lexer.token != Symbol.SEMICOLON )
+					signalError.showError("';' expected", true);
+				else
+					lexer.nextToken();
+				
 				if(sendMessage && exprLeft.getType() != Type.voidType)
 					this.signalError.showError("Message send returns a value that is not used");
 			}
 			
 			sendMessage = false;
-			
+
 			return new AssignExpr(exprLeft, exprRight);
 		}
 	}
@@ -985,6 +991,7 @@ public class Compiler {
 	}
 
 	private void nullStatement() {
+		System.out.println("\n\n\n\n\n\n ENTROU \n\n\n\n\n\n");
 		lexer.nextToken();
 	}
 
@@ -1369,15 +1376,13 @@ public class Compiler {
 						
 						KraClass classVar = (KraClass ) typeVar;
 						InstanceVariable var = classVar.searchInstanceVariable(id);
-						Variable v = this.symbolTable.getInLocal(id);
-
+						//Variable v = this.symbolTable.getInLocal(id);
 						
 						if(var == null) {
 							this.signalError.showError("Variable '" + id + "' does not exist in class '"+classVar.getName()+"'");								
 						}
 						
-						
-						return new PrimaryExpr(avar,v);
+						return new PrimaryExpr(avar, var);
 					}	}
 			}
 			break;

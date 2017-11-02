@@ -1,9 +1,15 @@
+/* Universidade Federal de Sao Carlos
+ * 
+ * 	Bruno Donato Banhos
+ * 	Indrid Maria Santos Pires
+ * 
+ * */
 package comp;
 
 /**
  * a compilation error
  * 
-   @author José
+   @author Josï¿½
  */
 public class CompilationError {
 

@@ -1,3 +1,9 @@
+/* Universidade Federal de Sao Carlos
+ * 
+ * 	Bruno Donato Banhos
+ * 	Indrid Maria Santos Pires
+ * 
+ * */
 package ast;
 
 import java.util.ArrayList;
@@ -18,12 +24,14 @@ public class CompositeStatement extends Statement {
 	@Override
 	public void genKra(PW pw) {
 
-		pw.printIdent("{\n");
+		pw.println(" {");
 		
 		for(Statement statement : this.statementList) {
 			statement.genKra(pw);
 		}
+		pw.sub();
 		pw.printIdent("}\n");
+		pw.add();
 	}
 
 	private ArrayList<Statement> statementList;

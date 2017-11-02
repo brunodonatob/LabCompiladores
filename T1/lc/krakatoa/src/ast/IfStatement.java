@@ -1,3 +1,9 @@
+/* Universidade Federal de Sao Carlos
+ * 
+ * 	Bruno Donato Banhos
+ * 	Indrid Maria Santos Pires
+ * 
+ * */
 package ast;
 
 public class IfStatement extends Statement {
@@ -18,12 +24,12 @@ public class IfStatement extends Statement {
 	public void genKra(PW pw) {
 		pw.printIdent("if ( ");
 		expr.genKra(pw, false);
-		pw.println(" )");
+		pw.print(" )");
 		pw.add();
 		ifStmt.genKra(pw);
 		pw.sub();
 		if(elseStmt != null) {
-			pw.println("else");
+			pw.printIdent("else");
 			pw.add();
 			elseStmt.genKra(pw);
 			pw.sub();

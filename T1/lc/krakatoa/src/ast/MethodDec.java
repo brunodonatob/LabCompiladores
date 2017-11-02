@@ -1,3 +1,9 @@
+/* Universidade Federal de Sao Carlos
+ * 
+ * 	Bruno Donato Banhos
+ * 	Indrid Maria Santos Pires
+ * 
+ * */
 package ast;
 
 import java.util.ArrayList;

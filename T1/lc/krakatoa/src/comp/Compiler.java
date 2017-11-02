@@ -1,10 +1,9 @@
-/*
-  Universidade Federal de Sao Carlos
-
-   Bruno Donato  RA 587460
-   Ingrid Santos RA 620300
-
-*/
+/* Universidade Federal de Sao Carlos
+ * 
+ * 	Bruno Donato Banhos
+ * 	Indrid Maria Santos Pires
+ * 
+ * */
 
 /*
  AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec

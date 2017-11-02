@@ -29,6 +29,7 @@ public class CompositeStatement extends Statement {
 		for(Statement statement : this.statementList) {
 			statement.genKra(pw);
 		}
+
 		pw.sub();
 		pw.printIdent("}\n");
 		pw.add();

@@ -21,7 +21,7 @@ public class ParenthesisExpr extends Expr {
     public void genKra(PW pw,boolean putParenthesis) {
     	pw.print("(");
         expr.genKra(pw, false);
-        pw.printIdent(")");
+        pw.print(")");
 	}
     
     public Type getType() {

@@ -17,15 +17,11 @@ public class CompositeStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		Iterator<Statement> sList = statementList.iterator();
 
 		pw.printIdent("{ ");
-		Statement s = sList.next();
-		s.genKra(pw);
 		
-		while(sList.hasNext()) {
-			s = sList.next();
-			s.genKra(pw);
+		for(Statement statement : this.statementList) {
+			statement.genKra(pw);
 		}
 		pw.print(" }");
 	}

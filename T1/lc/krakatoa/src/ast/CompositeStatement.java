@@ -20,9 +20,9 @@ public class CompositeStatement extends Statement {
 
 		pw.printIdent("{\n");
 		
-		//for(Statement statement : this.statementList) {
-			//statement.genKra(pw);
-		//}
+		for(Statement statement : this.statementList) {
+			statement.genKra(pw);
+		}
 		pw.printIdent("}\n");
 	}
 

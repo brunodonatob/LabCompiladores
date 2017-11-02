@@ -704,7 +704,7 @@ public class Compiler {
 					lexer.nextToken();
 				
 				if(sendMessage && exprLeft.getType() != Type.voidType)
-					this.signalError.showError("Message send returns a value that is not used");
+					this.signalError.showError("Message send returns a value that is not used", true);
 			}
 			
 			sendMessage = false;

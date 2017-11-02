@@ -18,12 +18,12 @@ public class CompositeStatement extends Statement {
 	@Override
 	public void genKra(PW pw) {
 
-		pw.printIdent("{ ");
+		pw.printIdent("{\n");
 		
-		for(Statement statement : this.statementList) {
-			statement.genKra(pw);
-		}
-		pw.print(" }");
+		//for(Statement statement : this.statementList) {
+			//statement.genKra(pw);
+		//}
+		pw.printIdent("}\n");
 	}
 
 	private ArrayList<Statement> statementList;

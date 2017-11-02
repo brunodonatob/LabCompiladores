@@ -584,8 +584,7 @@ public class Compiler {
 		case STRING:
 			return assignExprLocalDec();
 		case ASSERT:
-			assertStatement();
-			break;
+			return assertStatement();
 		case RETURN:
 			return returnStatement();
 		case READ:
@@ -603,8 +602,7 @@ public class Compiler {
 		case DO:
 			return doWhileStatement();
 		case SEMICOLON:
-			nullStatement();
-			break;
+			return nullStatement();
 		case LEFTCURBRACKET:
 			return compositeStatement();
 		default:
@@ -615,6 +613,7 @@ public class Compiler {
 	}
 
 	private Statement assertStatement() {
+	
 		lexer.nextToken();
 		int lineNumber = lexer.getLineNumber();
 		Expr e = expr();
@@ -990,9 +989,9 @@ public class Compiler {
 		return new BreakStatement();
 	}
 
-	private void nullStatement() {
-		System.out.println("\n\n\n\n\n\n ENTROU \n\n\n\n\n\n");
+	private NullStatement nullStatement() {
 		lexer.nextToken();
+		return new NullStatement();
 	}
 
 	// ExpressionList := Expression { “,” Expression }

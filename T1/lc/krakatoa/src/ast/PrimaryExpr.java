@@ -39,10 +39,11 @@ public class PrimaryExpr extends Expr {
 	}
 	
 	// 4. Id "." Id "." Id "(" [ ExpressionList ] ")"
-	public PrimaryExpr(Variable avar, Variable var2, MethodDec method) {
+	public PrimaryExpr(Variable avar, Variable var2, MethodDec method, ExprList exprList) {
 		this.id = avar;
 		this.var2 = var2;
 		this.method = method;
+		this.exprs = exprList;
 		this.primaryExprCase = 4;
 	}
 
@@ -86,31 +87,16 @@ public class PrimaryExpr extends Expr {
 	
 	@Override
 	public void genKra(PW pw, boolean putParenthesis) {
-//		if(str!= null)
-//			pw.printIdent(str+".");
-//		
-//		id.genKra(pw);
-//		if(var2 != null) {
-//			pw.print(".");
-//			var2.genKra(pw);
-//		}
-//		
-//		// ?????
-//		if(method!= null) {
-//			pw.print(".");
-//			method.genKra(pw);
-//		}
-		
-		
 		
 		switch(primaryExprCase) {
-		case 1:
+		case 1: // 1. Id
 			pw.print(this.id.getName());
 			break;
-		case 2:
-			
+		
+		case 2:	// 2. Id "." Id 
 			pw.print(this.id.getName() +"."+ this.var2.getName());
 			break;
+		
 		case 3: // 3. Id "." Id "(" [ ExpressionList ] ")"
 			pw.print(this.id.getName());
 			pw.print(".");
@@ -120,11 +106,49 @@ public class PrimaryExpr extends Expr {
 				this.exprs.genKra(pw);
 			pw.print(")");
 			break;
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
+		
+		case 4: // 4. Id "." Id "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.id.getName());
+			pw.print(".");
+			pw.print(this.var2.getName());
+			pw.print(".");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genKra(pw);
+			pw.print(")");
+			break;
+		
+		case 5: // 5. "this"
+			pw.print(this.str);
+			break;
+			
+		case 6: // 6. "this" "." Id
+			pw.print(this.str);
+			pw.print(".");
+			pw.print(this.id.getName());
+			break;
+			
+		case 7: // 7. "this" "." Id "(" [ ExpressionList ] ")" e  "super" "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.str);
+			pw.print(".");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genKra(pw);
+			pw.print(")");
+			break;
+		
+		case 8: // 8. "this" "." Id "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.str);
+			pw.print(".");
+			pw.print(this.id.getName());
+			pw.print(".");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genKra(pw);
+			pw.print(")");
 		}
 			
 	}

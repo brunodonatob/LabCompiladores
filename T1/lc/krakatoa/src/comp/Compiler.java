@@ -1282,7 +1282,7 @@ public class Compiler {
 					lexer.nextToken();
 					id = lexer.getStringValue();
 					if ( lexer.token == Symbol.DOT ) {
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													
+						// Id "." Id "." Id "(" [ ExpressionList ] ")"																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							
 						/*
 						 * se o compilador permite vari�veis est�ticas, � poss�vel
 						 * ter esta op��o, como
@@ -1309,6 +1309,8 @@ public class Compiler {
 						if ( lexer.token != Symbol.IDENT )
 							signalError.showError("Identifier expected");
 						messageName = lexer.getStringValue();
+						lexer.nextToken();
+						exprList = this.realParameters();
 						
 						Variable var2 = this.symbolTable.getInLocal(id);
 						if(var2 == null) {
@@ -1325,7 +1327,7 @@ public class Compiler {
 							this.signalError.showError("Variable '" + messageName + "' does not exist in class '"+cvar.getName()+"'");								
 						}
 						
-						return new PrimaryExpr(avar, var2, aMethod);
+						return new PrimaryExpr(avar, var2, aMethod, exprList);
 
 					}
 					else if ( lexer.token == Symbol.LEFTPAR ) {

@@ -6,7 +6,7 @@ public class TypeBoolean extends Type {
 
    @Override
    public String getCname() {
-      return "int";
+      return "boolean";
    }
 
 }

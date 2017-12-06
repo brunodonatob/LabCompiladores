@@ -62,7 +62,7 @@ public class Comp {
         	   // compile all files in this directory
         	   File fileList[] = file.listFiles();
         	   for ( File f : fileList ) {
-        		   String filename = f.getName(); System.out.println("\n\n"+filename+"------------------------------------------------");
+        		   String filename = f.getName();
         		   int lastIndexDot = filename.lastIndexOf('.');
         		   String ext = filename.substring(lastIndexDot + 1);
         		   if ( ext.equalsIgnoreCase("kra") ) {

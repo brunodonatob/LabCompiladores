@@ -258,28 +258,55 @@ public class Comp {
         	   
         	   
         	   
-               FileOutputStream  outputStream;
-               try {
-                  outputStream = new FileOutputStream(outputFileName + ".kra2");
-               } catch ( IOException e ) {
-                   String msg = "File " + outputFileName + " was not found";
-                   outError.println(msg);
-                   return ;
-               }
-               PrintWriter printWriter = new PrintWriter(outputStream);
-        	   
-        	   
-              PW pw = new PW();
-              pw.set(printWriter);
-              try {
-              program.genKra( pw );
-              }catch ( RuntimeException e ) {
-                  e.printStackTrace();
-              }
-              if ( printWriter.checkError() ) {
-                 outError.println("There was an error in the output");
-              }
-              printWriter.close();
+//               FileOutputStream  outputStream;
+//               try {
+//                  outputStream = new FileOutputStream(outputFileName + ".kra2");
+//               } catch ( IOException e ) {
+//                   String msg = "File " + outputFileName + " was not found";
+//                   outError.println(msg);
+//                   return ;
+//               }
+//               PrintWriter printWriter = new PrintWriter(outputStream);
+//        	   
+//        	   
+//              PW pw = new PW();
+//              pw.set(printWriter);
+//              try {
+//              program.genKra( pw );
+//              }catch ( RuntimeException e ) {
+//                  e.printStackTrace();
+//              }
+//              if ( printWriter.checkError() ) {
+//                 outError.println("There was an error in the output");
+//              }
+//              printWriter.close();
+               
+               /* 
+                * Geracao de código em C++ 
+                */
+               
+			   FileOutputStream  outputStream;
+			   try {
+			      outputStream = new FileOutputStream(outputFileName + ".cpp");
+			   } catch ( IOException e ) {
+			       String msg = "File " + outputFileName + " was not found";
+			       outError.println(msg);
+			       return ;
+			   }
+			   PrintWriter printWriter = new PrintWriter(outputStream);
+			   
+			   
+			  PW pw = new PW();
+			  pw.set(printWriter);
+			  try {
+			  program.genCpp( pw );
+			  }catch ( RuntimeException e ) {
+			      e.printStackTrace();
+			  }
+			  if ( printWriter.checkError() ) {
+			     outError.println("There was an error in the output");
+			  }
+			  printWriter.close();              
            }
 	}
 

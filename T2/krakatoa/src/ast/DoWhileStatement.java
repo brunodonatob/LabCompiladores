@@ -21,17 +21,14 @@ public class DoWhileStatement extends Statement {
 
 	@Override
 	public void genKra(PW pw) {
-		pw.printIdent("do {");
+		pw.printIdent("do");
 		pw.add();
+
 		compStatement.genKra(pw);
 		pw.sub();
-		pw.print("");
-		pw.print("}");
-		pw.print("while ( ");
+		pw.printIdent("while ( ");
 		expr.genKra(pw,false);
-		pw.print(")");
-		
-		
+		pw.println(" );");
 	}
 
 	private CompositeStatement compStatement;

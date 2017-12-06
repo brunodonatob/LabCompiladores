@@ -23,7 +23,7 @@ public class LiteralBoolean extends Expr {
     }
 
 	public void genKra(PW pw,boolean putParenthesis) {
-	       pw.print( value ? "1" : "0" );		
+	       pw.print( value ? "true" : "false" );		
 	}
 	
     public static LiteralBoolean True  = new LiteralBoolean(true);

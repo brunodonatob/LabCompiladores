@@ -24,18 +24,25 @@ public class ReadStatement extends Statement {
 	public void genKra(PW pw) {
 		Iterator<Variable> varList = idList.iterator();
 		
-		pw.printIdent("read(");
+		pw.printIdent("read( ");
 		
 		Variable var = varList.next();
-		var.genKra(pw);
+		
+		if(var instanceof InstanceVariable) {
+			pw.print("this.");
+		}
+		pw.print(var.getName());
 		
 		while(varList.hasNext()) {
 			pw.print(", ");
 			var = varList.next();
-			var.genKra(pw);
+			if(var instanceof InstanceVariable) {
+				pw.print("this.");
+			}
+			pw.print(var.getName());
 		}
 		
-		pw.println(");");
+		pw.println(" );");
 	}
 
 	ArrayList<Variable> idList;

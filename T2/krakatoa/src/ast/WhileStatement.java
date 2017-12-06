@@ -31,7 +31,10 @@ public class WhileStatement extends Statement {
 	public void genKra(PW pw) {
 		pw.printIdent("while ( ");
 		expr.genKra(pw,false);
-		pw.println(" ) ");
+		pw.print(" ) ");
+		if(!(statement instanceof CompositeStatement)) {
+			pw.println("");
+		}
 		pw.add();
 		this.statement.genKra(pw);
 		pw.sub();

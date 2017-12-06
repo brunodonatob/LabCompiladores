@@ -26,11 +26,17 @@ public class IfStatement extends Statement {
 		expr.genKra(pw, false);
 		pw.print(" )");
 		pw.add();
+		if(!(ifStmt instanceof CompositeStatement)) {
+			pw.println("");
+		}
 		ifStmt.genKra(pw);
 		pw.sub();
 		if(elseStmt != null) {
 			pw.printIdent("else");
 			pw.add();
+			if(!(elseStmt instanceof CompositeStatement)) {
+				pw.println("");
+			}
 			elseStmt.genKra(pw);
 			pw.sub();
 		}

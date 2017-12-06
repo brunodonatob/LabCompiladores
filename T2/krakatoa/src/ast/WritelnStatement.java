@@ -20,7 +20,8 @@ public class WritelnStatement extends WriteStatement {
 
 	@Override
 	public void genKra(PW pw) {
-		// TODO Auto-generated method stub
-		
+		pw.printIdent("writeln ( ");
+		super.getExprList().genKra(pw);
+		pw.println(" );");
 	}
 }

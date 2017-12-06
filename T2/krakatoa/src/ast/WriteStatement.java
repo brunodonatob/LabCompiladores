@@ -11,6 +11,10 @@ public class WriteStatement extends Statement {
 	public WriteStatement(ExprList exprList) {
 		this.exprList = exprList;
 	}
+	
+	public ExprList getExprList() {
+		return exprList;
+	}
 
 	@Override
 	public void genCpp(PW pw) {
@@ -22,7 +26,7 @@ public class WriteStatement extends Statement {
 	public void genKra(PW pw) {
 		pw.printIdent("write ( ");
 		exprList.genKra(pw);
-		pw.print(" );");
+		pw.println(" );");
 		
 	}
 

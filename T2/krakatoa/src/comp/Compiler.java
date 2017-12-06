@@ -6,54 +6,54 @@
  * */
 
 /*
- AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec
- BasicType := “void” | “int” | “boolean” | “String”
+ AssignExprLocalDec := Expression [ â€œ=â€� Expression ] | LocalDec
+ BasicType := â€œvoidâ€� | â€œintâ€� | â€œbooleanâ€� | â€œStringâ€�
  BasicValue := IntValue | BooleanValue | StringValue
- BooleanValue := “true” | “false”
- ClassDec := “class” Id [ “extends” Id ] “{” MemberList “}”
- CompStatement := “{” { Statement } “}“
- Digit := “0” | ... | “9”
- DoWhileStat := “do” CompStatement “while” “(” Expression “)”
+ BooleanValue := â€œtrueâ€� | â€œfalseâ€�
+ ClassDec := â€œclassâ€� Id [ â€œextendsâ€� Id ] â€œ{â€� MemberList â€œ}â€�
+ CompStatement := â€œ{â€� { Statement } â€œ}â€œ
+ Digit := â€œ0â€� | ... | â€œ9â€�
+ DoWhileStat := â€œdoâ€� CompStatement â€œwhileâ€� â€œ(â€� Expression â€œ)â€�
  Expression := SimpleExpression [ Relation SimpleExpression ]
- ExpressionList := Expression { “,” Expression }
- Factor := BasicValue | “(” Expression “)” | “!” Factor | “null” | ObjectCreation | PrimaryExpr
- FormalParamDec := ParamDec { “,” ParamDec }
- HighOperator := “∗” | “/” | “&&”
- Id := Letter { Letter | Digit | “ ” }
- IdList := Id { “,” Id }
- IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]
- InstVarDec := Type IdList “;”
+ ExpressionList := Expression { â€œ,â€� Expression }
+ Factor := BasicValue | â€œ(â€� Expression â€œ)â€� | â€œ!â€� Factor | â€œnullâ€� | ObjectCreation | PrimaryExpr
+ FormalParamDec := ParamDec { â€œ,â€� ParamDec }
+ HighOperator := â€œâˆ—â€� | â€œ/â€� | â€œ&&â€�
+ Id := Letter { Letter | Digit | â€œ â€� }
+ IdList := Id { â€œ,â€� Id }
+ IfStat := â€œifâ€� â€œ(â€� Expression â€œ)â€� Statement [ â€œelseâ€� Statement ]
+ InstVarDec := Type IdList â€œ;â€�
  IntValue := Digit { Digit }
- LeftValue := [ (“this” | Id ) “.” ] Id
- Letter := “A” | ... | “Z” | “a” | ... | “z”
- LocalDec := Type IdList “;”
- LowOperator := “+” | “−” | “||”
+ LeftValue := [ (â€œthisâ€� | Id ) â€œ.â€� ] Id
+ Letter := â€œAâ€� | ... | â€œZâ€� | â€œaâ€� | ... | â€œzâ€�
+ LocalDec := Type IdList â€œ;â€�
+ LowOperator := â€œ+â€� | â€œâˆ’â€� | â€œ||â€�
  MemberList := { Qualifier Member }
  Member := InstVarDec | MethodDec
- MethodDec := Type Id “(” [ FormalParamDec ] “)” “{” StatementList “}”
- MOCall := “@” Id [ “(” { MOParam } “)” ]
+ MethodDec := Type Id â€œ(â€� [ FormalParamDec ] â€œ)â€� â€œ{â€� StatementList â€œ}â€�
+ MOCall := â€œ@â€� Id [ â€œ(â€� { MOParam } â€œ)â€� ]
  MOParam := IntValue | StringValue | Id
- ObjectCreation := “new” Id “(” “)”
+ ObjectCreation := â€œnewâ€� Id â€œ(â€� â€œ)â€�
  ParamDec := Type Id
  Program := { MOCall } ClassDec { ClassDec }
- Qualifier := [ “final” ] [ “static” ] ( “private” | “public”)
- ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
- PrimaryExpr := “super” “.” Id “(” [ ExpressionList ] “)” | Id | Id “.” Id | Id “.” Id “(” [ ExpressionList ] ”)” |
-		Id “.” Id “.” Id “(” [ ExpressionList ] “)” | “this” | “this” “.” Id | “this” ”.” Id “(” [ ExpressionList ] “)” |
-		“this” ”.” Id “.” Id “(” [ ExpressionList ] “)”
- Relation := “==” | “<” | “>” | “<=” | “>=” | “! =”
- ReturnStat := “return” Expression
- RightValue := “this” [ “.” Id ] | Id [ “.” Id ]
- Signal := “+” | “−”
+ Qualifier := [ â€œfinalâ€� ] [ â€œstaticâ€� ] ( â€œprivateâ€� | â€œpublicâ€�)
+ ReadStat := â€œreadâ€� â€œ(â€� LeftValue { â€œ,â€� LeftValue } â€œ)â€�
+ PrimaryExpr := â€œsuperâ€� â€œ.â€� Id â€œ(â€� [ ExpressionList ] â€œ)â€� | Id | Id â€œ.â€� Id | Id â€œ.â€� Id â€œ(â€� [ ExpressionList ] â€�)â€� |
+		Id â€œ.â€� Id â€œ.â€� Id â€œ(â€� [ ExpressionList ] â€œ)â€� | â€œthisâ€� | â€œthisâ€� â€œ.â€� Id | â€œthisâ€� â€�.â€� Id â€œ(â€� [ ExpressionList ] â€œ)â€� |
+		â€œthisâ€� â€�.â€� Id â€œ.â€� Id â€œ(â€� [ ExpressionList ] â€œ)â€�
+ Relation := â€œ==â€� | â€œ<â€� | â€œ>â€� | â€œ<=â€� | â€œ>=â€� | â€œ! =â€�
+ ReturnStat := â€œreturnâ€� Expression
+ RightValue := â€œthisâ€� [ â€œ.â€� Id ] | Id [ â€œ.â€� Id ]
+ Signal := â€œ+â€� | â€œâˆ’â€�
  SignalFactor := [ Signal ] Factor
  SimpleExpression := Term { LowOperator Term }
- Statement := AssignExprLocalDec “;” | IfStat | WhileStat | ReturnStat “;” | ReadStat “;” | WriteStat “;” |
-  	“break” “;” | “;” | CompStatement | DoWhileStat
+ Statement := AssignExprLocalDec â€œ;â€� | IfStat | WhileStat | ReturnStat â€œ;â€� | ReadStat â€œ;â€� | WriteStat â€œ;â€� |
+  	â€œbreakâ€� â€œ;â€� | â€œ;â€� | CompStatement | DoWhileStat
  StatementList := { Statement }
  Term := SignalFactor { HighOperator SignalFactor }
  Type := BasicType | Id
- WriteStat := “write” “(” ExpressionList “)”
- WhileStat := “while” “(” Expression “)” Statement
+ WriteStat := â€œwriteâ€� â€œ(â€� ExpressionList â€œ)â€�
+ WhileStat := â€œwhileâ€� â€œ(â€� Expression â€œ)â€� Statement
 
  */
 
@@ -136,7 +136,7 @@ public class Compiler {
      * </code>
      *
      *
-     * MOCall := “@” Id [ “(” { MOParam } “)” ]
+     * MOCall := â€œ@â€� Id [ â€œ(â€� { MOParam } â€œ)â€� ]
      * MOParam := IntValue | StringValue | Id
      *
 	 */
@@ -190,7 +190,7 @@ public class Compiler {
 		return new MetaobjectCall(name, metaobjectParamList);
 	}
 
-	//  ClassDec := “class” Id [ “extends” Id ] “{” MemberList “}”
+	//  ClassDec := â€œclassâ€� Id [ â€œextendsâ€� Id ] â€œ{â€� MemberList â€œ}â€�
 	private KraClass classDec() {
 		// Note que os metodos desta classe nao correspondem exatamente as
 		// regras
@@ -634,15 +634,15 @@ public class Compiler {
 	}
 
 	/*
-	 * retorne true se 'name' � uma classe declarada anteriormente. � necess�rio
-	 * fazer uma busca na tabela de s�mbolos para isto.
+	 * retorne true se 'name' ï¿½ uma classe declarada anteriormente. ï¿½ necessï¿½rio
+	 * fazer uma busca na tabela de sï¿½mbolos para isto.
 	 */
 	private boolean isType(String name) {
 		return this.symbolTable.getInGlobal(name) != null;
 	}
 
 	/*
-	 * AssignExprLocalDec := Expression [ “=” Expression ] | LocalDec
+	 * AssignExprLocalDec := Expression [ â€œ=â€� Expression ] | LocalDec
 	 */
 	private Statement assignExprLocalDec() {
 		if ( lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
@@ -723,7 +723,7 @@ public class Compiler {
 		return anExprList;
 	}
 
-	// WhileStat := “while” “(” Expression “)” Statement
+	// WhileStat := â€œwhileâ€� â€œ(â€� Expression â€œ)â€� Statement
 	private WhileStatement whileStatement() {
 
 		lexer.nextToken();
@@ -745,7 +745,7 @@ public class Compiler {
 		return new WhileStatement(e, s);
 	}
 
-	// DoWhileStat := “do” CompStatement “while” “(” Expression “)”
+	// DoWhileStat := â€œdoâ€� CompStatement â€œwhileâ€� â€œ(â€� Expression â€œ)â€�
 	private DoWhileStatement doWhileStatement() {
 				
 		lexer.nextToken();
@@ -770,11 +770,13 @@ public class Compiler {
 		}
 		if ( lexer.token != Symbol.RIGHTPAR ) signalError.showError(") expected");
 		lexer.nextToken();
+		if ( lexer.token != Symbol.SEMICOLON ) signalError.showError("; expected");
+		lexer.nextToken();		
 		
 		return new DoWhileStatement(compStatement, e);
 	}
 	
-	// IfStat := “if” “(” Expression “)” Statement [ “else” Statement ]
+	// IfStat := â€œifâ€� â€œ(â€� Expression â€œ)â€� Statement [ â€œelseâ€� Statement ]
 	private IfStatement ifStatement() {
 
 		Statement ifStmt = null;
@@ -800,7 +802,7 @@ public class Compiler {
 		return new IfStatement(e, ifStmt, elseStmt);
 	}
 
-	// ReturnStat := “return” Expression
+	// ReturnStat := â€œreturnâ€� Expression
 	private ReturnStatement returnStatement() {
 
 		if( this.currentMethod.getReturnType() == Type.voidType ) {
@@ -823,12 +825,12 @@ public class Compiler {
 		return new ReturnStatement(e);
 	}
 
-	// ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
+	// ReadStat := â€œreadâ€� â€œ(â€� LeftValue { â€œ,â€� LeftValue } â€œ)â€�
 	private ReadStatement readStatement() {
 		/*
-		 * ReadStat := “read” “(” LeftValue { “,” LeftValue } “)”
-		 * LeftValue := [ (“this” | Id ) “.” ] Id
-		 * Id := Letter { Letter | Digit | “ ” }
+		 * ReadStat := â€œreadâ€� â€œ(â€� LeftValue { â€œ,â€� LeftValue } â€œ)â€�
+		 * LeftValue := [ (â€œthisâ€� | Id ) â€œ.â€� ] Id
+		 * Id := Letter { Letter | Digit | â€œ â€� }
 		 * 
 		 * "variables (local, parameter, static or instance)
 		 *  of the type int ou String"
@@ -861,8 +863,8 @@ public class Compiler {
 					signalError.showError("Instance variable '"+ name +"' has not been declared");
 				}
 				
-				if(instVar.getType() == Type.booleanType) {
-					signalError.showError("Read statement does not accept boolean variables");
+				if(instVar.getType() != Type.intType && instVar.getType() != Type.stringType) {
+					signalError.showError("'int' or 'String' expression expected");
 				}
 				
 				idList.add(instVar);
@@ -874,8 +876,8 @@ public class Compiler {
 					signalError.showError("Variable '"+ name +"' has not been declared");
 				}
 				
-				if(var.getType() == Type.booleanType) {
-					signalError.showError("Read statement does not accept boolean variables");
+				if(var.getType() != Type.intType && var.getType() != Type.stringType) {
+					signalError.showError("'int' or 'String' expression expected");
 				}
 							
 				idList.add(var);
@@ -903,10 +905,10 @@ public class Compiler {
 		return new ReadStatement(idList);
 	}
 
-	// WriteStat := “write” “(” ExpressionList “)”
+	// WriteStat := â€œwriteâ€� â€œ(â€� ExpressionList â€œ)â€�
 	private WriteStatement writeStatement() {
 		/*
-		 *  ExpressionList := Expression { “,” Expression }
+		 *  ExpressionList := Expression { â€œ,â€� Expression }
 		 *  Expression := SimpleExpression [ Relation SimpleExpression ]
 		 *  SimpleExpression := Term { LowOperator Term }
 		 * 
@@ -938,10 +940,10 @@ public class Compiler {
 		return new WriteStatement(exprList);
 	}
 
-	// WriteStat := “writeln” “(” ExpressionList “)”
+	// WriteStat := â€œwritelnâ€� â€œ(â€� ExpressionList â€œ)â€�
 	private WritelnStatement writelnStatement() {
 		/*
-		 *  ExpressionList := Expression { “,” Expression }
+		 *  ExpressionList := Expression { â€œ,â€� Expression }
 		 *  Expression := SimpleExpression [ Relation SimpleExpression ]
 		 *  SimpleExpression := Term { LowOperator Term }
 		 * 
@@ -993,7 +995,7 @@ public class Compiler {
 		return new NullStatement();
 	}
 
-	// ExpressionList := Expression { “,” Expression }
+	// ExpressionList := Expression { â€œ,â€� Expression }
 	private ExprList exprList() {
 		// ExpressionList ::= Expression { "," Expression }
 
@@ -1010,7 +1012,7 @@ public class Compiler {
 	private Expr expr() {
 		/*
 		 *  SimpleExpression := Term { LowOperator Term }
-		 *  Relation := “==” | “<” | “>” | “<=” | “>=” | “! =”
+		 *  Relation := â€œ==â€� | â€œ<â€� | â€œ>â€� | â€œ<=â€� | â€œ>=â€� | â€œ! =â€�
 		 *  
 		 * */
 
@@ -1066,7 +1068,7 @@ public class Compiler {
 	private Expr simpleExpr() {
 		/*
 		 * Term := SignalFactor { HighOperator SignalFactor }
-		 * LowOperator := “+” | “−” | “||”
+		 * LowOperator := â€œ+â€� | â€œâˆ’â€� | â€œ||â€�
 		 * 
 		 * */
 		Symbol op;
@@ -1282,10 +1284,10 @@ public class Compiler {
 					if ( lexer.token == Symbol.DOT ) {
 						// Id "." Id "." Id "(" [ ExpressionList ] ")"																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																							
 						/*
-						 * se o compilador permite vari�veis est�ticas, � poss�vel
-						 * ter esta op��o, como
+						 * se o compilador permite variï¿½veis estï¿½ticas, ï¿½ possï¿½vel
+						 * ter esta opï¿½ï¿½o, como
 						 *     Clock.currentDay.setDay(12);
-						 * Contudo, se vari�veis est�ticas n�o estiver nas especifica��es,
+						 * Contudo, se variï¿½veis estï¿½ticas nï¿½o estiver nas especificaï¿½ï¿½es,
 						 * sinalize um erro neste ponto.
 						 */
 						
@@ -1408,12 +1410,12 @@ public class Compiler {
 					signalError.showError("Identifier expected");
 				id = lexer.getStringValue();
 				lexer.nextToken();
-				// j� analisou "this" "." Id
+				// jï¿½ analisou "this" "." Id
 				if ( lexer.token == Symbol.LEFTPAR ) {
 					// "this" "." Id "(" [ ExpressionList ] ")"
 					/*
-					 * Confira se a classe corrente possui um m�todo cujo nome �
-					 * 'ident' e que pode tomar os par�metros de ExpressionList
+					 * Confira se a classe corrente possui um mï¿½todo cujo nome ï¿½
+					 * 'ident' e que pode tomar os parï¿½metros de ExpressionList
 					 */
 					sendMessage = true;
 					MethodDec amethod = currentClass.searchPublicMethod(id);

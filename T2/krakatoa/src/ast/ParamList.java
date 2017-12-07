@@ -57,8 +57,18 @@ public class ParamList {
 	}
 	
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		Iterator<Parameter> pList = this.elements();
 		
+		if(pList.hasNext()) {
+			Parameter p = pList.next();
+			p.genCpp(pw);
+			
+			while(pList.hasNext()) {
+				p = pList.next();
+				pw.print(", ");
+				p.genCpp(pw);				
+			}
+		}		
 	}
 
     private ArrayList<Parameter> paramList;

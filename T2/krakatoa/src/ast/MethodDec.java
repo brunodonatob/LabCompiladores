@@ -75,11 +75,10 @@ public class MethodDec {
 	}
 	
 	public void genCpp(PW pw) {
-		//pw.printIdent(qualifier.toString());
 		pw.printIdent("virtual ");
 		pw.print(returnType.getCname() +" ");
 		pw.print(name +"(");
-		//this.paramList.genKra(pw);
+		this.paramList.genCpp(pw);
 		pw.println(") {");
 		pw.add();
 		

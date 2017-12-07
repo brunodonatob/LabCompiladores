@@ -12,7 +12,7 @@ public class TypeBoolean extends Type {
 
    @Override
    public String getCname() {
-      return "boolean";
+      return "bool";
    }
 
 }

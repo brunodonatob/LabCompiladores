@@ -13,7 +13,7 @@ public class TypeString extends Type {
     }
     
    public String getCname() {
-      return "String";
+      return "string";
    }
 
 }

@@ -14,7 +14,8 @@ public class InstanceVariable extends Variable {
     
     @Override
     public void genCpp(PW pw) {
-    	
+    	pw.printIdent(super.getType().getCname() +" "+ super.getName()+";");
+    	pw.println("");
     }
     
     @Override

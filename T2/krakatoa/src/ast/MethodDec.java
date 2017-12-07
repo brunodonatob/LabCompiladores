@@ -75,7 +75,21 @@ public class MethodDec {
 	}
 	
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		//pw.printIdent(qualifier.toString());
+		pw.printIdent("virtual ");
+		pw.print(returnType.getCname() +" ");
+		pw.print(name +"(");
+		//this.paramList.genKra(pw);
+		pw.println(") {");
+		pw.add();
+		
+//		for(Statement statement : this.statementList) {
+//			statement.genKra(pw);
+//		}
+		
+		pw.sub();
+		pw.printIdent("}\n");
+		
 		
 	}
 	

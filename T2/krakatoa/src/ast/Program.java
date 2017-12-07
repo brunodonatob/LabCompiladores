@@ -29,8 +29,12 @@ public class Program {
 	}
 
 	public void genCpp(PW pw) {
-		pw.println("#include <stdio.h>");
-		System.out.println("Gerando c++");
+		pw.println("#include <iostream>");
+		pw.println("");
+		
+		for(KraClass k: classList) {
+			k.genCpp(pw);
+		}
 	}
 	
 	public ArrayList<KraClass> getClassList() {

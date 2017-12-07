@@ -23,7 +23,9 @@ public class Variable {
     	 pw.print(name);
     }
     
-    public void genCpp(PW pw) {}
+    public void genCpp(PW pw) {
+    	pw.print(name);
+    }
 
 
     private String name;

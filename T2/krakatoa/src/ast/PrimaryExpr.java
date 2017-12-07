@@ -89,6 +89,68 @@ public class PrimaryExpr extends Expr {
 
 	@Override
 	public void genCpp(PW pw, boolean putParenthesis) {
+		switch(primaryExprCase) {
+		case 1: // 1. Id
+			pw.print(this.id.getName());
+			break;
+		
+		case 2:	// 2. Id "." Id
+			pw.print(this.id.getName() +"."+ this.var2.getName());
+			break;
+		
+		case 3: // 3. Id "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.id.getName());
+			pw.print(".");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genCpp(pw);
+			pw.print(")");
+			break;
+		
+		case 4: // 4. Id "." Id "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.id.getName());
+			pw.print(".");
+			pw.print(this.var2.getName());
+			pw.print(".");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genCpp(pw);
+			pw.print(")");
+			break;
+		
+		case 5: // 5. "this"
+			pw.print(this.str);
+			break;
+			
+		case 6: // 6. "this" "." Id
+			pw.print(this.str);
+			pw.print("->");
+			pw.print(this.id.getName());
+			break;
+			
+		case 7: // 7. "this" "." Id "(" [ ExpressionList ] ")" e  "super" "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.str);
+			pw.print("->");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genCpp(pw);
+			pw.print(")");
+			break;
+		
+		case 8: // 8. "this" "." Id "." Id "(" [ ExpressionList ] ")"
+			pw.print(this.str);
+			pw.print("->");
+			pw.print(this.id.getName());
+			pw.print(".");
+			pw.print(this.method.getName());
+			pw.print("(");
+			if(this.exprs != null)
+				this.exprs.genCpp(pw);
+			pw.print(")");
+		}
 	}
 	
 	@Override

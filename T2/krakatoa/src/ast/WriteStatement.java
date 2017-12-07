@@ -26,6 +26,9 @@ public class WriteStatement extends Statement {
 		int size = exprList.getSize();
         for ( Expr e : list ) {
         	e.genCpp(pw, false);
+        	
+        	pw.print(" << \" \"");
+        	
             if ( --size > 0 )
                 pw.print(" << ");
         }

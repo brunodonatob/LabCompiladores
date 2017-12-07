@@ -2,3 +2,7 @@
 /lexer/
 /ast/
 /.settings/
+/t/
+/*.cpp
+/*.exe
+/*.txt

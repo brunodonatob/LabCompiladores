@@ -20,7 +20,20 @@ public class CompositeExpr extends Expr {
     
     @Override
 	public void genCpp( PW pw, boolean putParenthesis ) {
-        
+    	if ( putParenthesis )
+            pw.print("(");
+    	
+    	left.genCpp(pw, true);
+    	String strSymbol = arrayOper.get(oper);
+    	if ( strSymbol == null ) {
+    		pw.println("internal error in CompositeExpr::genCpp");
+    	}
+    	else
+    		pw.print(" " + strSymbol + " ");
+    	right.genCpp(pw, true);
+    	
+    	if ( putParenthesis )
+    		pw.print(")"); 
     }
     
     public void genKra(PW pw, boolean putParenthesis) {
@@ -38,7 +51,7 @@ public class CompositeExpr extends Expr {
     	
     	if ( putParenthesis )
     		pw.print(")");
-    	}
+    }
 
     @Override
 	public Type getType() {

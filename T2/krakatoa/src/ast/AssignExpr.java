@@ -15,7 +15,14 @@ public class AssignExpr extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent("");
+		exprLeft.genCpp(pw, false);
+		
+		if(this.exprRight != null) {
+			pw.print(" = ");
+			exprRight.genCpp(pw, false);
+		}
+		pw.println(";");
 
 	}
 

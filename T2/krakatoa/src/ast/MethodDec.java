@@ -82,9 +82,9 @@ public class MethodDec {
 		pw.println(") {");
 		pw.add();
 		
-//		for(Statement statement : this.statementList) {
-//			statement.genKra(pw);
-//		}
+		for(Statement statement : this.statementList) {
+			statement.genCpp(pw);
+		}
 		
 		pw.sub();
 		pw.printIdent("}\n");

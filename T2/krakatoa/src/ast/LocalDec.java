@@ -18,8 +18,21 @@ public class LocalDec extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
-
+		pw.printIdent(type.getName());
+		
+		Iterator<String> iList = idList.iterator();
+		
+		if(iList.hasNext()) {
+			String id = iList.next();
+			pw.print(" "+ id);
+			
+			while(iList.hasNext()) {
+				id = iList.next();
+				pw.print(", "+ id);
+			}
+			
+			pw.println(";");
+		}
 	}
 
 	@Override
@@ -39,7 +52,6 @@ public class LocalDec extends Statement {
 			
 			pw.println(";");
 		}
-
 	}
 
 	private Type type;

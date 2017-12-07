@@ -13,7 +13,7 @@ public class LiteralString extends Expr {
     }
     
     public void genCpp( PW pw, boolean putParenthesis ) {
-        pw.print(literalString);
+        pw.print("\""+literalString+"\"");
     }
     
     public void genKra(PW pw,boolean putParenthesis) {

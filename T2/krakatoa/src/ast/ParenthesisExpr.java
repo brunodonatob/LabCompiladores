@@ -13,7 +13,9 @@ public class ParenthesisExpr extends Expr {
     }
     
     public void genCpp( PW pw, boolean putParenthesis ) {
- 
+    	pw.print("(");
+        expr.genCpp(pw, false);
+        pw.print(")");
     }
     
     public void genKra(PW pw,boolean putParenthesis) {

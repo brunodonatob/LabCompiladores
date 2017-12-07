@@ -16,8 +16,9 @@ public class NewObjectExpr extends Expr {
 
 	@Override
 	public void genCpp(PW pw, boolean putParenthesis) {
-		// TODO Auto-generated method stub
-
+		pw.print("new ");
+		pw.print(className.getCname());
+		pw.print("()");
 	}
 
 	@Override

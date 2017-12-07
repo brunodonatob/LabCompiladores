@@ -24,7 +24,7 @@ public class LocalDec extends Statement {
 		
 		if(iList.hasNext()) {
 			String id = iList.next();
-			pw.print(" "+ id);
+			pw.print(" *"+ id);
 			
 			while(iList.hasNext()) {
 				id = iList.next();

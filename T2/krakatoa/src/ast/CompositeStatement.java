@@ -17,7 +17,16 @@ public class CompositeStatement extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+
+		pw.println(" {");
+		
+		for(Statement statement : this.statementList) {
+			statement.genCpp(pw);
+		}
+
+		pw.sub();
+		pw.printIdent("}\n");
+		pw.add();
 		
 	}
 

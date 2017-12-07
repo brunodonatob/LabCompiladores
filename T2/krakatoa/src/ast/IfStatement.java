@@ -16,8 +16,24 @@ public class IfStatement extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
-		
+		pw.printIdent("if ( ");
+		expr.genCpp(pw, false);
+		pw.print(" )");
+		pw.add();
+		if(!(ifStmt instanceof CompositeStatement)) {
+			pw.println("");
+		}
+		ifStmt.genCpp(pw);
+		pw.sub();
+		if(elseStmt != null) {
+			pw.printIdent("else");
+			pw.add();
+			if(!(elseStmt instanceof CompositeStatement)) {
+				pw.println("");
+			}
+			elseStmt.genCpp(pw);
+			pw.sub();	
+		}	
 	}
 
 	@Override

@@ -6,6 +6,8 @@
  * */
 package ast;
 
+import java.util.ArrayList;
+
 public class WriteStatement extends Statement {
 	
 	public WriteStatement(ExprList exprList) {
@@ -18,7 +20,17 @@ public class WriteStatement extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent("cout << ");
+		
+		ArrayList<Expr> list = exprList.getList();
+		int size = exprList.getSize();
+        for ( Expr e : list ) {
+        	e.genCpp(pw, false);
+            if ( --size > 0 )
+                pw.print(" << ");
+        }
+		pw.println(";");
+		
 		
 	}
 

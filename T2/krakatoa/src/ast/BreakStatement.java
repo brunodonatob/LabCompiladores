@@ -10,8 +10,8 @@ public class BreakStatement extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
-		
+		pw.printIdent("break;");
+		pw.println("");
 	}
 
 	@Override

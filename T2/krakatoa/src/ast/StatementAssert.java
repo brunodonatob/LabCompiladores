@@ -14,13 +14,6 @@ public class StatementAssert extends Statement {
 	}
 	@Override
 	public void genCpp(PW pw) {
-		pw.printIdent("if ( !( ");
-		expr.genCpp(pw, false);
-		pw.println(" ) ) {");
-		pw.add();
-		pw.printlnIdent("puts(\"" + message +  "\");");
-		pw.sub();
-		pw.printlnIdent("}");
 
 	}
 	

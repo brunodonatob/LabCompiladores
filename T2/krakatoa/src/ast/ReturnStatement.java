@@ -18,8 +18,9 @@ public class ReturnStatement extends Statement {
 	
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
-		
+		pw.printIdent("return ");
+		expr.genCpp(pw,false);
+		pw.println(";");
 	}
 
 	@Override

@@ -30,7 +30,8 @@ public class Program {
 
 	public void genCpp(PW pw) {
 		pw.println("#include <iostream>");
-		pw.println("");
+		pw.println("using namespace std;");
+		pw.println("");	
 		
 		for(KraClass k: classList) {
 			k.genCpp(pw);

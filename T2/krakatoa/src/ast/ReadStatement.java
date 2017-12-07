@@ -16,8 +16,28 @@ public class ReadStatement extends Statement {
 	
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		Iterator<Variable> varList = idList.iterator();
 		
+		pw.printIdent("cin >> ");
+		
+		Variable var = varList.next();
+		
+		if(var instanceof InstanceVariable) {
+			pw.print("this->");
+		}
+		pw.print(var.getName());
+		
+		while(varList.hasNext()) {
+			pw.print(" >> ");
+			var = varList.next();
+			if(var instanceof InstanceVariable) {
+				pw.print("this->");
+			}
+			pw.print(var.getName());
+		}
+		
+		pw.println(" ;");
+				
 	}
 
 	@Override

@@ -23,7 +23,15 @@ public class WhileStatement extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent("while ( ");
+		expr.genCpp(pw,false);
+		pw.print(" ) ");
+		if(!(statement instanceof CompositeStatement)) {
+			pw.println("");
+		}
+		pw.add();
+		this.statement.genCpp(pw);
+		pw.sub();
 		
 	}
 	

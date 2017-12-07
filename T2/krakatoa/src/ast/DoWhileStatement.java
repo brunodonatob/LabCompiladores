@@ -15,8 +15,14 @@ public class DoWhileStatement extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
-		
+		pw.printIdent("do");
+		pw.add();
+
+		compStatement.genCpp(pw);
+		pw.sub();
+		pw.printIdent("while ( ");
+		expr.genCpp(pw,false);
+		pw.println(" );");
 	}
 
 	@Override

@@ -14,7 +14,9 @@ public class WritelnStatement extends WriteStatement {
 
 	@Override
 	public void genCpp(PW pw) {
-		// TODO Auto-generated method stub
+		pw.printIdent("cout << ");
+		super.getExprList().genCpp(pw);
+		pw.println(";");
 		
 	}
 

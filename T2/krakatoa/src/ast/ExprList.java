@@ -22,6 +22,11 @@ public class ExprList {
 		return exprList.size();
 	}
 
+	
+	public ArrayList<Expr> getList(){
+		return exprList;
+	}
+	
 	public boolean hasBoolean() {
 		for(Expr e : exprList) {
 			if(e.getType() == Type.booleanType)

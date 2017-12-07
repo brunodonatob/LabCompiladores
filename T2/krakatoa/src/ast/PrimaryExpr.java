@@ -100,7 +100,14 @@ public class PrimaryExpr extends Expr {
 		
 		case 3: // 3. Id "." Id "(" [ ExpressionList ] ")"
 			pw.print(this.id.getName());
-			pw.print(".");
+			
+			if(id.getType().isClassType()) {
+				pw.print("->");
+			}
+			else {
+				pw.print(".");	
+			}
+			
 			pw.print(this.method.getName());
 			pw.print("(");
 			if(this.exprs != null)

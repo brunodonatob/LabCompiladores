@@ -22,7 +22,9 @@ public class Parameter extends Variable {
     
     @Override
     public void genCpp(PW pw) {
-    	
+    	pw.print(super.getType().getCname());
+    	pw.print(" ");
+    	pw.print(super.getName());
     }
 
 

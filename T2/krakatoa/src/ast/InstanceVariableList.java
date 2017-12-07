@@ -27,15 +27,17 @@ public class InstanceVariableList {
     }
     
     public void genCpp(PW pw) {
-    	pw.printlnIdent("private:");
-    	pw.add();
-		for(InstanceVariable instVar : instanceVariableList) {
-			instVar.genCpp(pw);
-		}
-		pw.sub();
-		
-		if(!this.instanceVariableList.isEmpty())
-			pw.println("");
+    	if(!instanceVariableList.isEmpty()) {
+        	pw.printlnIdent("private:");
+        	pw.add();
+    		for(InstanceVariable instVar : instanceVariableList) {
+    			instVar.genCpp(pw);
+    		}
+    		pw.sub();
+    		
+    		if(!this.instanceVariableList.isEmpty())
+    			pw.println("");	
+    	}
     }
     
 	public void genKra(PW pw) {

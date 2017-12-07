@@ -75,9 +75,20 @@ public class MethodDec {
 	}
 	
 	public void genCpp(PW pw) {
-		pw.printIdent("virtual ");
-		pw.print(returnType.getCname() +" ");
-		pw.print(name +"(");
+		
+		pw.printIdent("");
+		
+		if(this.name.equals("run")) {
+			pw.print("int main(");
+		}
+		else {
+			pw.print("virtual ");
+			pw.print(returnType.getCname() +" ");
+			pw.print(name +"(");
+		}
+		
+		
+		
 		this.paramList.genCpp(pw);
 		pw.println(") {");
 		pw.add();
@@ -88,8 +99,6 @@ public class MethodDec {
 		
 		pw.sub();
 		pw.printIdent("}\n");
-		
-		
 	}
 	
 	private String name;

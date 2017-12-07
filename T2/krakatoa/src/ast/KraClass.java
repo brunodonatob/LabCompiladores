@@ -122,23 +122,23 @@ public class KraClass extends Type {
 		// Imprime as variaveis de instancia
 		   this.instanceVariableList.genCpp(pw);
 		   
-		   if(!privateMethodList.isEmpty()) {
-			   pw.printlnIdent("private:");
-			   pw.add();
-		   }
+//		   if(!privateMethodList.isEmpty()) {
+//			   pw.printlnIdent("private:");
+//			   pw.add();
+//		   }
 		   // Imprime os metodos privados
 		   for(MethodDec pvMethod : this.privateMethodList) {
 			   pvMethod.genCpp(pw);
 			   pw.println("");
 		   }		   
-		   if(!privateMethodList.isEmpty()) {
-			   pw.sub();
-		   }
+//		   if(!privateMethodList.isEmpty()) {
+//			   pw.sub();
+//		   }
 
-		   if(!publicMethodList.isEmpty()) {
-			   pw.printlnIdent("public:");
-			   pw.add();
-		   }
+//		   if(!publicMethodList.isEmpty()) {
+//			   pw.printlnIdent("public:");
+//			   pw.add();
+//		   }
 		   // Imprime os metodos publicos
 		   for(MethodDec pbMethod : this.publicMethodList) {
 			   if(pbMethod.getName().equals("run")) {
@@ -148,16 +148,13 @@ public class KraClass extends Type {
 			   pbMethod.genCpp(pw);
 			   pw.println("");
 		   }
-		   if(!publicMethodList.isEmpty()) {
-			   pw.sub();
-		   }
-		   
-		   pw.println("int main() {");
+//		   if(!publicMethodList.isEmpty()) {
+//			   pw.sub();
+//		   }
 		   
 		   run.genCpp(pw);
 		   pw.println("");
 		   
-		   pw.println("}");
 	   }
 	   else {
 		   pw.print("class " + this.name);

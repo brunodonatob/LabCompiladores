@@ -6,6 +6,8 @@
  * */
 package ast;
 
+import java.util.ArrayList;
+
 /* PrimaryExpressions Cases
  * 
  * 1. Id
@@ -110,8 +112,17 @@ public class PrimaryExpr extends Expr {
 			
 			pw.print(this.method.getName());
 			pw.print("(");
-			if(this.exprs != null)
-				this.exprs.genCpp(pw);
+			if(this.exprs != null) {
+				ArrayList<Expr> exprList = this.exprs.getList();
+		        int size = exprList.size();
+		        for ( Expr e : exprList ) {
+		        	if(e.getType().isClassType())
+		        		pw.print("*");
+		        	e.genCpp(pw, false);
+		            if ( --size > 0 )
+		                pw.print(", ");
+		        }
+			}
 			pw.print(")");
 			break;
 		

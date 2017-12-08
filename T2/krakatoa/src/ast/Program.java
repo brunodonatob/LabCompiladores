@@ -36,6 +36,13 @@ public class Program {
 		for(KraClass k: classList) {
 			k.genCpp(pw);
 		}
+		
+		pw.println("int main() {");
+		pw.add();
+		pw.printlnIdent("Program *p = new Program();");
+		pw.printlnIdent("p->run();");
+		pw.sub();
+		pw.printIdent("}");
 	}
 	
 	public ArrayList<KraClass> getClassList() {

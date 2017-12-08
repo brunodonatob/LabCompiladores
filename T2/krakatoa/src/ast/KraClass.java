@@ -116,98 +116,51 @@ public class KraClass extends Type {
    }
    
    public void genCpp(PW pw) {
-	   if(this.name.equals("Program")) {
-		   
-		MethodDec run = null;
-		// Imprime as variaveis de instancia
-			
-		   this.instanceVariableList.genCpp(pw);
-		   
-//		   if(!privateMethodList.isEmpty()) {
-//			   pw.printlnIdent("private:");
-//			   pw.add();
-//		   }
-		   // Imprime os metodos privados
-		   for(MethodDec pvMethod : this.privateMethodList) {
-			   pvMethod.genCpp(pw);
-			   pw.println("");
-		   }		   
-//		   if(!privateMethodList.isEmpty()) {
-//			   pw.sub();
-//		   }
 
-//		   if(!publicMethodList.isEmpty()) {
-//			   pw.printlnIdent("public:");
-//			   pw.add();
-//		   }
-		   // Imprime os metodos publicos
-		   for(MethodDec pbMethod : this.publicMethodList) {
-			   if(pbMethod.getName().equals("run")) {
-				   run = pbMethod;
-				   continue;
-			   }
-			   pbMethod.genCpp(pw);
-			   pw.println("");
-		   }
-//		   if(!publicMethodList.isEmpty()) {
-//			   pw.sub();
-//		   }
-		   
-		   run.genCpp(pw);
-		   pw.println("");
-		   
+	   pw.print("class " + this.name);
+	   
+	   if(this.superclass != null) {
+		   pw.print(": public " + superclass.getName());
 	   }
-	   else {
-		   pw.print("class " + this.name);
-		   
-		   if(this.superclass != null) {
-			   pw.print(": public " + superclass.getName());
-		   }
-		   
-		   pw.println(" {");
-		   pw.println("");
-		   pw.add();
-		   
-		   // Imprime as variaveis de instancia
+	   
+	   pw.println(" {");
+	   pw.println("");
+	   pw.add();
+	   
+	   // Imprime as variaveis de instancia
+	   this.instanceVariableList.genCpp(pw);
+	   
+	   if(!privateMethodList.isEmpty()) {
 		   pw.printlnIdent("private:");
 		   pw.add();
-		   this.instanceVariableList.genCpp(pw);
-		   pw.sub();
-		   
-		   if(!privateMethodList.isEmpty()) {
-			   pw.printlnIdent("private:");
-			   pw.add();
-		   }
-		   // Imprime os metodos privados
-		   for(MethodDec pvMethod : this.privateMethodList) {
-			   pw.printIdent("virtual ");
-			   pvMethod.genCpp(pw);
-			   pw.println("");
-		   }		   
-		   if(!privateMethodList.isEmpty()) {
-			   pw.sub();
-		   }
-
-		   if(!publicMethodList.isEmpty()) {
-			   pw.printlnIdent("public:");
-			   pw.add();
-		   }
-		   // Imprime os metodos publicos
-		   for(MethodDec pbMethod : this.publicMethodList) {
-			   pw.printIdent("virtual ");
-			   pbMethod.genCpp(pw);
-			   pw.println("");
-		   }
-		   if(!publicMethodList.isEmpty()) {
-			   pw.sub();
-		   }
-		   
-		   pw.sub();
-		   pw.println("};");
+	   }
+	   // Imprime os metodos privados
+	   for(MethodDec pvMethod : this.privateMethodList) {
+		   pw.printIdent("virtual ");
+		   pvMethod.genCpp(pw);
 		   pw.println("");
+	   }		   
+	   if(!privateMethodList.isEmpty()) {
+		   pw.sub();
 	   }
 
+	   if(!publicMethodList.isEmpty()) {
+		   pw.printlnIdent("public:");
+		   pw.add();
+	   }
+	   // Imprime os metodos publicos
+	   for(MethodDec pbMethod : this.publicMethodList) {
+		   pw.printIdent("virtual ");
+		   pbMethod.genCpp(pw);
+		   pw.println("");
+	   }
+	   if(!publicMethodList.isEmpty()) {
+		   pw.sub();
+	   }
 	   
+	   pw.sub();
+	   pw.println("};");
+	   pw.println("");   
    }
    
    public void genKra(PW pw) {

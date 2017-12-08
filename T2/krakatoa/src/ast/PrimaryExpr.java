@@ -146,10 +146,9 @@ public class PrimaryExpr extends Expr {
 			break;
 			
 		case 6: // 6. "this" "." Id
-			if(!kraClass.getName().equals("Program")) {
-				pw.print(this.str);
-				pw.print("->");	
-			}
+
+			pw.print(this.str);
+			pw.print("->");	
 			
 			pw.print(this.id.getName());
 			break;
@@ -173,14 +172,14 @@ public class PrimaryExpr extends Expr {
 			break;
 		
 		case 8: // 8. "this" "." Id "." Id "(" [ ExpressionList ] ")"
-			if(!kraClass.getName().equals("Program")) {
-				pw.print(this.str);
-				pw.print("->");	
-			}
-//			pw.print(this.str);
-//			pw.print("->");
+			pw.print(this.str);
+			pw.print("->");	
+
 			pw.print(this.id.getName());
-			pw.print(".");
+			if(this.id.getType().isClassType())
+				pw.print("->");
+			else
+				pw.print(".");
 			pw.print(this.method.getName());
 			pw.print("(");
 			if(this.exprs != null)

@@ -76,17 +76,15 @@ public class MethodDec {
 	
 	public void genCpp(PW pw) {
 		
-		if(this.name.equals("run")) {
-			pw.print("int main(");
+		if(returnType.isClassType()) {
+			pw.print(returnType.getCname() +"* ");
 		}
 		else {
-//			pw.print("virtual ");
 			pw.print(returnType.getCname() +" ");
-			pw.print(name +"(");
 		}
-		
-		
-		
+			
+		pw.print(name +"(");
+	
 		this.paramList.genCpp(pw);
 		pw.println(") {");
 		pw.add();

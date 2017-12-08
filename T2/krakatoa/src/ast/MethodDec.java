@@ -76,13 +76,11 @@ public class MethodDec {
 	
 	public void genCpp(PW pw) {
 		
-		pw.printIdent("");
-		
 		if(this.name.equals("run")) {
 			pw.print("int main(");
 		}
 		else {
-			pw.print("virtual ");
+//			pw.print("virtual ");
 			pw.print(returnType.getCname() +" ");
 			pw.print(name +"(");
 		}

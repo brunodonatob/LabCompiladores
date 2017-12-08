@@ -28,12 +28,10 @@ public class InstanceVariableList {
     
     public void genCpp(PW pw) {
     	if(!instanceVariableList.isEmpty()) {
-        	pw.printlnIdent("private:");
-        	pw.add();
+
     		for(InstanceVariable instVar : instanceVariableList) {
     			instVar.genCpp(pw);
     		}
-    		pw.sub();
     		
     		if(!this.instanceVariableList.isEmpty())
     			pw.println("");	

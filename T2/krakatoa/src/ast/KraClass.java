@@ -120,6 +120,7 @@ public class KraClass extends Type {
 		   
 		MethodDec run = null;
 		// Imprime as variaveis de instancia
+			
 		   this.instanceVariableList.genCpp(pw);
 		   
 //		   if(!privateMethodList.isEmpty()) {
@@ -168,7 +169,10 @@ public class KraClass extends Type {
 		   pw.add();
 		   
 		   // Imprime as variaveis de instancia
+		   pw.printlnIdent("private:");
+		   pw.add();
 		   this.instanceVariableList.genCpp(pw);
+		   pw.sub();
 		   
 		   if(!privateMethodList.isEmpty()) {
 			   pw.printlnIdent("private:");
@@ -176,6 +180,7 @@ public class KraClass extends Type {
 		   }
 		   // Imprime os metodos privados
 		   for(MethodDec pvMethod : this.privateMethodList) {
+			   pw.printIdent("virtual ");
 			   pvMethod.genCpp(pw);
 			   pw.println("");
 		   }		   
@@ -189,6 +194,7 @@ public class KraClass extends Type {
 		   }
 		   // Imprime os metodos publicos
 		   for(MethodDec pbMethod : this.publicMethodList) {
+			   pw.printIdent("virtual ");
 			   pbMethod.genCpp(pw);
 			   pw.println("");
 		   }

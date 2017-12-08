@@ -1251,7 +1251,7 @@ public class Compiler {
 			lexer.nextToken();
 			exprList = realParameters();
 			
-			return new PrimaryExpr("super", aSuperMethod, exprList);
+			return new PrimaryExpr("super", aSuperMethod, exprList, this.currentClass);
 		case IDENT:
 			/*
           	 * PrimaryExpr ::=
@@ -1464,7 +1464,7 @@ public class Compiler {
 					else
 						this.signalError.showError("Inconpatible number of parameters");
 						
-					return new PrimaryExpr("this", amethod, exprList);
+					return new PrimaryExpr("this", amethod, exprList, this.currentClass);
 				}
 				else if ( lexer.token == Symbol.DOT ) {
 					// "this" "." Id "." Id "(" [ ExpressionList ] ")"
@@ -1503,7 +1503,7 @@ public class Compiler {
 					}
 					exprList = this.realParameters();
 					
-					return new PrimaryExpr("this", thisId, amethod, exprList);
+					return new PrimaryExpr("this", thisId, amethod, exprList, this.currentClass);
 				}
 				else {
 					// retorne o objeto da ASA que representa "this" "." Id
@@ -1520,7 +1520,7 @@ public class Compiler {
 					InstanceVariable instVar = this.currentClass.searchInstanceVariable(id);
 
 					
-					return new PrimaryExpr("this", instVar);
+					return new PrimaryExpr("this", instVar, this.currentClass);
 				}
 			}
 		default:

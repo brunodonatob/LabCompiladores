@@ -18,17 +18,23 @@ public class LocalDec extends Statement {
 
 	@Override
 	public void genCpp(PW pw) {
-		pw.printIdent(type.getName());
+		pw.printIdent(type.getCname());
 		
 		Iterator<String> iList = idList.iterator();
 		
 		if(iList.hasNext()) {
 			String id = iList.next();
-			pw.print(" *"+ id);
+			if(type.isClassType())
+				pw.print(" *"+ id);
+			else
+				pw.print(" "+ id);
 			
 			while(iList.hasNext()) {
 				id = iList.next();
-				pw.print(", "+ id);
+				if(type.isClassType())
+					pw.print(", *"+ id);
+				else
+					pw.print(", "+ id);
 			}
 			
 			pw.println(";");

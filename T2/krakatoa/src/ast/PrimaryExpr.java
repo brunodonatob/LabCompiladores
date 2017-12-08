@@ -64,26 +64,29 @@ public class PrimaryExpr extends Expr {
 	}
 	
 	// 6. "this" "." Id
-	public PrimaryExpr(String string, Variable var) {
+	public PrimaryExpr(String string, Variable var, KraClass kraClass) {
 		this.id = var;
 		this.str = string;
+		this.kraClass = kraClass;
 		this.primaryExprCase = 6;
 	}
 
 	// 7. "this" "." Id "(" [ ExpressionList ] ")" e  "super" "." Id "(" [ ExpressionList ] ")"
-	public PrimaryExpr(String string, MethodDec amethod, ExprList exprList) {
+	public PrimaryExpr(String string, MethodDec amethod, ExprList exprList, KraClass kraClass) {
 		this.exprs = exprList;
 		this.str = string;
 		this.method = amethod;
+		this.kraClass = kraClass;
 		this.primaryExprCase = 7;
 	}
 
 	// 8. "this" "." Id "." Id "(" [ ExpressionList ] ")"
-	public PrimaryExpr(String string,Variable var2, MethodDec amethod, ExprList exprList) {
+	public PrimaryExpr(String string,Variable var2, MethodDec amethod, ExprList exprList, KraClass k) {
 		this.exprs = exprList;
 		this.str = string;
 		this.method = amethod;
 		this.id = var2;
+		this.kraClass = k;
 		this.primaryExprCase = 8;
 	}
 
@@ -143,14 +146,25 @@ public class PrimaryExpr extends Expr {
 			break;
 			
 		case 6: // 6. "this" "." Id
-			pw.print(this.str);
-			pw.print("->");
+			if(!kraClass.getName().equals("Program")) {
+				pw.print(this.str);
+				pw.print("->");	
+			}
+			
 			pw.print(this.id.getName());
 			break;
 			
 		case 7: // 7. "this" "." Id "(" [ ExpressionList ] ")" e  "super" "." Id "(" [ ExpressionList ] ")"
-			pw.print(this.str);
-			pw.print("->");
+			
+			if(this.str.equals("this")) {
+				pw.print(this.str);
+				pw.print("->");	
+			}
+			else {
+				pw.print(this.kraClass.getSuperclass().getName());
+				pw.print("::");
+			}			
+			
 			pw.print(this.method.getName());
 			pw.print("(");
 			if(this.exprs != null)
@@ -159,8 +173,12 @@ public class PrimaryExpr extends Expr {
 			break;
 		
 		case 8: // 8. "this" "." Id "." Id "(" [ ExpressionList ] ")"
-			pw.print(this.str);
-			pw.print("->");
+			if(!kraClass.getName().equals("Program")) {
+				pw.print(this.str);
+				pw.print("->");	
+			}
+//			pw.print(this.str);
+//			pw.print("->");
 			pw.print(this.id.getName());
 			pw.print(".");
 			pw.print(this.method.getName());

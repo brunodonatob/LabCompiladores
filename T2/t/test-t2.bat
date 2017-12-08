@@ -35,6 +35,7 @@ java -cp . comp.Comp ..\..\tests\OK-GER09.KRA
 java -cp . comp.Comp ..\..\tests\OK-GER10.KRA
 java -cp . comp.Comp ..\..\tests\OK-GER11.KRA
 java -cp . comp.Comp ..\..\tests\OK-GER12.KRA
+java -cp . comp.Comp ..\..\tests\OK-GER13.KRA
 java -cp . comp.Comp ..\..\tests\OK-GER14.KRA
 java -cp . comp.Comp ..\..\tests\OK-GER15.KRA
 java -cp . comp.Comp ..\..\tests\OK-GER16.KRA
